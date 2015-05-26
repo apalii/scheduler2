@@ -4,6 +4,8 @@ __pycache__/
 migrations/
 *.db
 .idea/
+BJ.py
+
 
 # C extensions
 *.so
