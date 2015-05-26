@@ -1,0 +1,117 @@
+{% extends "main.html" %}
+{% load static %}
+
+{% block title %}Add task{% endblock %}
+
+{% block additional_js %}
+<link href={% static "css/jquery.datetimepicker.css" %} rel="stylesheet" />
+<link href="https://code.jquery.com/ui/1.11.4/themes/smoothness/jquery-ui.css" rel="stylesheet"/>
+<script src={% static "js/jquery.datetimepicker.js" %}></script>
+<script src={% static "js/validator.js" %}></script>
+<script src="https://code.jquery.com/ui/1.11.4/jquery-ui.min.js"></script>
+{% endblock %}
+
+{% block content %}<br>
+
+<form  class="form-horizontal" action="/task/adding/" method="post" onsubmit="return validate();" >{% csrf_token %}
+
+      <div class="form-group">
+        <label class="col-sm-1 control-label">Date</label>
+        <div class="col-sm-3">
+          <input name="date"  class="form-control" id="datetimepicker"  required />
+        </div>
+          <p class="small" class="text-center">Kyiv time</p>
+      </div>
+
+      <div class="form-group">
+        <label class="col-sm-1 control-label">Ticket</label>
+        <div class="col-sm-3">
+          <input name="ticket"  class="form-control"  placeholder="444555" required />
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label class="col-sm-1 control-label">Customer</label>
+        <div class="col-sm-3">
+          <input name="customer" type="text"  class="form-control" id="cust_id"    required />
+            <span id="cust_id_err" style="display: none;" >Unknown customer !</span>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label class="col-sm-1 control-label">Task</label>
+        <div class="col-sm-3">
+          <input name="task" type="text" class="form-control"  placeholder="Apply patch" required />
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label class="col-sm-1 control-label">Executor</label>
+        <div class="col-sm-3">
+          <input name="executor" type="text" class="form-control"  placeholder="Nobody" />
+        </div>
+      </div>
+
+  <!--    <div class="form-group">
+        <label class="col-sm-1 control-label">Office</label>
+        <div class="col-sm-3">
+            <select class="form-control" name="office">
+                <option>Choose office</option>
+                <option value="1">Kyiv</option>
+                <option value="2">Chernihiv</option>
+                <option value="3">Sumy</option>
+            </select>
+        </div>
+      </div>  -->
+
+<div class="form-group">
+        <label class="col-sm-1 control-label">Office</label>
+        <div class="col-sm-3">
+            <div class="btn-group" data-toggle="buttons">
+              <label class="btn btn-default ">
+                <input value="1" type="radio" name="office" id="option1" autocomplete="off" > Kyiv
+              </label>
+              <label class="btn btn-default active">
+                <input value="2" type="radio" name="office" id="option2" autocomplete="off" checked> Chernihiv
+              </label>
+              <label class="btn btn-default">
+                <input value="3" type="radio" name="office" id="option3" autocomplete="off"> Sumy
+              </label>
+            </div>
+      </div>
+</div>    
+
+      <div class="form-group">
+        <div class="col-sm-offset-1 col-sm-4">
+          <button type="submit" class="btn btn-info">Add task</button>
+        </div>
+      </div>
+    
+</form>
+<script>
+    $('#datetimepicker').datetimepicker({
+    dayOfWeekStart : 1,
+    step: 15,
+    inline: false
+});
+</script>
+<script>
+    $(function() {
+        $("#cust_id").autocomplete({
+            source: function (request, response) {
+                $.ajax({
+                    url: "/tasks/getcustid",
+                    dataType: "json",
+                    data: {
+                        q: request.term
+                    },
+                    success: function (data) {
+                        response(data);
+                    }
+                });
+            },
+            minLength: 3
+        });
+    });
+</script>
+{% endblock %}

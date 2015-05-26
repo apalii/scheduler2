@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta http-equiv="content-type" content="text/html; charset=UTF-8"> 
+  <meta charset="utf-8">
+  <title>{% block title %}Main{% endblock %}</title>
+  <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css" rel="stylesheet">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/js/bootstrap.min.js"></script>
+</head>
+
+<body>
+  <div class="container-fluid">
+  <br>
+      {% block menubar %}
+    <div class="btn-group btn-group-justified" role="group" aria-label="...">
+      <a class="btn btn-info" href="/tasks/all">Tasks</a>
+      <a class="btn btn-info" href="/admin/">Admin</a>
+      <a class="btn btn-info" href="/admin/app_tasks/task/add/">Add task</a>
+    </div>
+    <br/>
+      {% endblock %}
+
+    <table class="table table-bordered">
+      <tr>
+        <td class="info">Ticket</td>
+        <td class="info">Date</td>
+        <td class="info">Customer</td>
+        <td class="info">Task</td>
+        <td class="info">Executor</td>
+        <td class="info">Status</td>
+
+      </tr>
+      <tr>
+        <td class="active">
+          <a class="btn btn-default" href="https://rt.portaone.com/Ticket/Display.html?id={{ task.ticket }}" target="_blank">{{ task.ticket }}</a>
+          <a class="btn btn-default" href="/tasks/get/{{ task.id }}/">detail</a>
+        </td>
+        <td class="active">{{ task.date|date:"d M" }}</td>
+        <td class="active">{{ task.customer }}</td>
+        <td class="active">{{ task.task|lower|truncatewords:'3' }}</td>
+        <td class="active">{{ task.executor }}</td>
+        <td class="danger">{{ task.status }}</td>
+      </tr>
+    </table>
+    <br><br>
+    <address>
+      <strong>Contact</strong><br>
+      <a href="mailto:#">Andrii.Palii@portaone.com</a>
+    </address>
+  </div>
+</body>
+</html>

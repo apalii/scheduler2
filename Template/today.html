@@ -1,0 +1,85 @@
+{% extends "main.html" %}
+{% block title %}Today{% endblock %}
+
+{% block content %}
+
+{% if today|length > 0 %}
+<div class="panel panel-warning">
+    <div class="panel-heading"><h5>Today</h5></div>
+    <div class="panel-body">
+        <div class="table-responsive">
+        <table class="table">
+{% for task in today %}
+      <tr class="text-center">
+        <td class="default">
+          <a href="https://rt.portaone.com/Ticket/Display.html?id={{ task.ticket }}" target="_blank">{{ task.ticket }}</a>
+          <a href="/tasks/get/{{ task.id }}/">detail</a>
+        </td>
+        <td class="default">{{ task.date|date:"H:i d.m.Y" }}</td>
+        <td class="default">
+            <a href="https://rt.portaone.com/Customers/Display.html?id={{ task.customer_id }}" target="_blank">{{ task.customer }}</a>
+        </td>
+        <td class="default">{{ task.task|lower|truncatewords:'3' }}</td>
+        <td class="default">{{ task.executor }}</td>
+        {% if task.status|lower == 'done' %}
+            <td class="success">{{ task.status }}</td>
+        {% elif 'In' in task.status or 'Post' in task.status  or 'Part' in task.status %}
+           <td class="info">{{ task.status }}</td>
+        {% elif 'Sch' in task.status %}
+           <td class="default">{{ task.status }}</td>
+        {% else %}
+           <td class="danger">{{ task.status }}</td>
+        </tr>
+        {% endif %}
+    {% endfor %}
+        </table>
+        </div>    
+    </div>
+</div>
+{% elif nearest|length > 0 %}
+
+<div class="alert alert-success">
+    <a href="#" class="close" data-dismiss="alert">&times;</a>
+    <strong>There are no tasks for today !</strong>
+</div>
+
+<div class="panel panel-success">
+    <div class="panel-heading"><h5>Nearest</h5></div>
+    <div class="panel-body">
+        <div class="table-responsive">
+        <table class="table">
+{% for task in nearest %}
+      <tr class="text-center">
+        <td class="default">
+          <a href="https://rt.portaone.com/Ticket/Display.html?id={{ task.ticket }}" target="_blank">{{ task.ticket }}</a>
+          <a href="/tasks/get/{{ task.id }}/">detail</a>
+        </td>
+        <td class="default">{{ task.date|date:"H:i d.m.Y" }}</td>
+        <td class="default">
+            <a  href="https://rt.portaone.com/Customers/Display.html?id={{ task.customer_id }}" target="_blank">{{ task.customer }}</a>
+        </td>
+        <td class="default">{{ task.task|lower|truncatewords:'3' }}</td>
+        <td class="default">{{ task.executor }}</td>
+        {% if task.status|lower == 'done' %}
+            <td class="success">{{ task.status }}</td>
+        {% elif 'In' in task.status or 'Post' in task.status  or 'Part' in task.status %}
+           <td class="info">{{ task.status }}</td>
+        {% elif 'Sch' in task.status %}
+           <td class="default">{{ task.status }}</td>
+        {% else %}
+           <td class="danger">{{ task.status }}</td>
+        {% endif %}
+      </tr>
+    {% endfor %}
+
+</table>
+        </div>
+    </div>
+</div>
+{% else %}
+<div class="alert alert-success">
+    <a href="#" class="close" data-dismiss="alert">&times;</a>
+    <strong>There are no task for today and the nearest tasks as well !</strong>
+</div
+{% endif %}
+{% endblock %}

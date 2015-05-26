@@ -1,0 +1,52 @@
+    <div class="btn-group btn-group-justified" role="group" aria-label="...">
+
+      <a class="btn btn-default" href="/">Home</a>
+        <a class="btn btn-default" href="/tasks/today">Today</a>
+      <a class="btn btn-default" href="/tasks/all">All Tasks</a>
+      <a class="btn btn-default" href="/tasks/month">This month</a>
+      <!--<a class="btn btn-default" href="/admin/">Admin</a> -->
+      <a class="btn btn-default" href="/tasks/addtask">Add task</a>
+      <a class="btn btn-default" href="/tz/main">Timezones</a>
+    </div>
+    <br/>
+
+
+
+<form  class="form-horizontal" action="/task/adding/" method="post">{% csrf_token %}
+
+      <div class="form-group">
+        <label class="col-sm-2 control-label">Ticket</label>
+        <div class="col-sm-10">
+          <input name="ticket" type="number" class="form-control"  placeholder="444555" required />
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label class="col-sm-2 control-label">Date</label>
+        <div class="col-sm-10">
+          <input name="date" type="datetime" class="form-control" required />
+            <small>YYYY-MM-DD HH:MM</small>
+        </div>
+
+      </div>
+
+      <div class="form-group">
+        <label class="col-sm-2 control-label">Customer</label>
+        <div class="col-sm-10">
+          <input name="customer" type="text"  class="form-control"  placeholder="Voko" required />
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label class="col-sm-2 control-label">Task</label>
+        <div class="col-sm-10">
+          <input name="task" type="text" class="form-control"  placeholder="Apply patch" required />
+        </div>
+      </div>
+
+      <div class="form-group">
+        <div class="col-sm-offset-2 col-sm-10">
+          <button type="submit" class="btn btn-info">Add task</button>
+        </div>
+      </div>
+</form>

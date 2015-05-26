@@ -1,0 +1,73 @@
+{% extends "main.html" %}
+{% load static %}
+
+{% block title %}Timezones{% endblock %}
+
+{% block additional_js %}
+    <script src="https://code.jquery.com/ui/1.11.4/jquery-ui.min.js"></script>
+    <script src={% static "js/jquery.datetimepicker.js" %}></script>
+    <link href="https://code.jquery.com/ui/1.11.4/themes/smoothness/jquery-ui.css" rel="stylesheet"/>
+    <link href={% static "css/jquery.datetimepicker.css" %} rel="stylesheet" />
+{% endblock %}
+{% block content %}
+<br>
+
+<form target="_blank"  class="form-horizontal" action="/tz/getcityid/" method="post">
+    {% csrf_token %}
+
+      <div class="form-group">
+        <label class="col-sm-1 control-label">Date</label>
+        <div class="col-sm-3">
+          <input name="date"  class="form-control" id="datetimepicker"  required />
+        </div>
+          <p class="small" class="text-center">Customer time</p>
+      </div>
+
+      <div class="form-group">
+        <label class="col-sm-1 control-label">City</label>
+        <div class="col-sm-3">
+          <input name="city" class="form-control" id="city"  required />
+        </div>
+      </div>
+
+      <div class="form-group">
+        <div class="col-sm-offset-1 col-sm-3">
+          <button type="submit" class="btn btn-info">Convert</button>
+        </div>
+      </div>
+
+</form>
+
+<script>
+    $(function() {
+        $("#city").autocomplete({
+            source: function (request, response) {
+                $.ajax({
+                    url: "/tz/getcityid",
+                    dataType: "json",
+                    data: {
+                        q: request.term
+                    },
+                    success: function (data) {
+                        response(data);
+                    }
+                });
+            },
+            minLength: 3,
+/*
+            select: function (event, ui) {
+                log(ui.item ?
+                    "Selected: " + ui.item.label :
+                    "Nothing selected, input was " + this.value);
+            },
+*/
+        });
+    });
+</script>
+<script>
+    $('#datetimepicker').datetimepicker({
+    dayOfWeekStart : 1,
+    step: 15,
+});
+</script>
+{% endblock %}

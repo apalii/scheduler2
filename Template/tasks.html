@@ -1,0 +1,104 @@
+{% extends "main.html" %}
+{% block title %}Tasks{% endblock %}
+
+{% block content %}
+<div class="table-responsive">
+<table class="table table-bordered">
+  <tr class="text-center">
+    <td class="info" width="200" >Ticket</td>
+    <td class="info" width="200" >Date</td>
+    <td class="info" width="200" >Customer</td>
+    <td class="info">Task</td>
+    <td class="info" width="120">Executor</td>
+    <td class="info" width="120">Status</td>
+  </tr>
+    {% for task in tasks %}
+        <tr class="text-center">
+        <td class="active">
+          <a href="https://rt.portaone.com/Ticket/Display.html?id={{ task.ticket }}" target="_blank">
+ <!--             <span class="badge">
+                  {% if task.office == 1 %}k{%elif task.office == 2 %}c{% elif task.office == 3 %}s{% else %}n{% endif %}
+              </span> -->
+              {{ task.ticket }}
+            </a>
+          <a href="/tasks/get/{{ task.id }}/"> 
+             <span class="glyphicon glyphicon-pencil" aria-hidden="true"></span>
+            </a>
+        </td>
+        <td class="active">{{ task.date|date:"H:i d M y"}}</td>
+        <td class="active">
+            <a href="https://rt.portaone.com/Customers/Display.html?id={{ task.customer_id }}" target="_blank">{{ task.customer }}</a>
+        </td>
+        <td class="active">{{ task.task|lower|truncatewords:'4' }}</td>
+        <td class="active">{{ task.executor }}</td>
+            {% if task.status|lower == 'done' %}
+                <td class="success">
+                    {{ task.status }}
+                </td>
+                {% elif 'In' in task.status or 'Post' in task.status  or 'Part' in task.status %}
+                   <td class="info">
+                       {{ task.status }}
+                   </td>
+                {% elif 'Sch' in task.status %}
+                   <td class="default">
+                       {{ task.status }}
+                   </td>
+                {% else %}
+                   <td class="danger">
+                       {{ task.status }}
+                   </td>
+            {% endif %}
+        </tr>
+    {% endfor %}
+</table>
+    <hr/>
+
+<table class="table table-bordered">
+  <tr class="text-center">
+    <td class="info" width="200" >Ticket</td>
+    <td class="info" width="200" >Date</td>
+    <td class="info" width="200" >Customer</td>
+    <td class="info">Task</td>
+    <td class="info" width="120">Executor</td>
+    <td class="info" width="120">Status</td>
+  </tr>
+    {% for task in tasks_old %}
+        <tr class="text-center">
+        <td class="active">
+          <a href="https://rt.portaone.com/Ticket/Display.html?id={{ task.ticket }}" target="_blank">
+              {{ task.ticket }}
+            </a>
+          <a href="/tasks/get/{{ task.id }}/">
+            <span class="glyphicon glyphicon-pencil" aria-hidden="true"></span>
+            </a>
+        </td>
+        <td class="active">{{ task.date|date:"H:i d M y"}}</td>
+        <td class="active"><a href="https://rt.portaone.com/Customers/Display.html?id={{ task.customer_id }}" target="_blank">{{ task.customer }}</a></td>
+        <td class="active">{{ task.task|lower|truncatewords:'3' }}</td>
+        <td class="active">{{ task.executor }}</td>
+            {% if task.status|lower == 'done' %}
+                <td class="success">
+                    {{ task.status }}
+                </td>
+                {% elif 'In' in task.status or 'Post' in task.status  or 'Part' in task.status %}
+                   <td class="info">
+                       {{ task.status }}
+                   </td>
+                {% elif 'Sch' in task.status %}
+                   <td class="default">
+                       {{ task.status }}
+                   </td>
+                {% else %}
+                   <td class="danger">
+                       {{ task.status }}
+                   </td>
+            {% endif %}
+        </tr>
+    {% endfor %}
+</table>
+    <hr/>
+</div>
+{% endblock %}
+
+
+

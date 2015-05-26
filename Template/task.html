@@ -1,0 +1,138 @@
+{% extends "main.html" %}
+{% load static %}
+{% block title %}{{ task.title }}{% endblock %}
+
+{% block additional_js %}
+<link href={% static "css/base.css" %} rel="stylesheet" />
+    <!-- x-editable (bootstrap version) -->
+<link href="http://vitalets.github.io/x-editable/assets/x-editable/bootstrap3-editable/css/bootstrap-editable.css" rel="stylesheet">
+        <script src="http://vitalets.github.io/x-editable/assets/x-editable/bootstrap3-editable/js/bootstrap-editable.js"></script>
+<script>
+$(document).ready(function() {
+    //toggle `popup` / `inline` mode
+    $.fn.editable.defaults.mode = 'inline';
+        </script>
+{% endblock %}
+
+{% block content %}<br>
+<div class="panel panel-primary">
+  <div class="panel-heading">
+      <a class="btn btn-default" href="https://rt.portaone.com/Ticket/Display.html?id={{ task.ticket }}" target="_blank">Open ticket in RT</a>
+      <a class="btn btn-default" href="https://rt.portaone.com/Customers/Search/Results.html?Query=Name LIKE '{{ task.customer }}' OR HostName LIKE '{{ task.customer }}' OR HostIP LIKE '{{ task.customer }}'" target="_blank">{{ task.customer }} in RT</a>
+  </div>
+  <div class="panel-body">
+      <div class="table-responsive">
+      <table class="table" >
+              <tr class="text-center">
+                <td class="default">
+                    <form class="form-horizontal" id="1" action="/task/changestatus/{{ task.id }}/" method="post">
+                        {% csrf_token %}
+                        <div class="col-sm-3">
+                        <select class="form-control" onchange="$('#1').submit()" id="change_status" name="status">
+                            <option>Change status</option>
+                            <option value="Scheduled">Scheduled</option>
+                            <option value="Done">Done</option>
+                            <option value="In progress">In progress</option>
+                            <option value="Postponed">Postponed</option>
+                            <option value="Partially">Partially</option>
+                            <option value="Cancelled">Cancelled</option>
+                            <option value="Failed">Failed</option>
+                        </select>
+                        </div>
+                    </form>
+                </td>
+                <td class="default">
+                    <span class="glyphicon glyphicon-time" aria-hidden="true"></span>
+                    {{ task.date|date:"H:i d M y"}}
+                </td>
+                <td class="default">
+                    <span class="glyphicon glyphicon-tasks" aria-hidden="true"></span>
+                    {{ task.task|lower}}
+                </td>
+                <td class="default">
+                    <span class="glyphicon glyphicon-user" aria-hidden="true"></span>
+                    <a href="#" id="username" data-type="text" data-pk="{{ task.id }}" data-url="/task/changeowner/" data-title="Enter username">{{ task.executor }}</a>
+                </td>
+                  <td class="default">
+                    {% if task.status|lower == 'done' %}
+                        
+                            <span class="glyphicon glyphicon-ok" aria-hidden="true"></span>
+                            {{ task.status }}
+                        {% elif 'In' in task.status or 'Post' in task.status  or 'Part' in task.status %}
+                               <span class="glyphicon glyphicon-wrench" aria-hidden="true"></span>
+                               {{ task.status }}
+                        {% elif 'Sch' in task.status %}
+                               <span class="glyphicon glyphicon-check" aria-hidden="true"></span>
+                               {{ task.status }}
+                        {% else %}
+                                <span class="glyphicon glyphicon-ban-circle" aria-hidden="true"></span>
+                               {{ task.status }}       
+                    {% endif %}
+                   </td>    
+                <td class="default">
+                        <form class="form-horizontal" id="delete" action="/task/delete/{{ task.id }}/" method="post">
+                        {% csrf_token %}
+                        <button type="submit" class="btn btn-danger">
+                            <span class="glyphicon glyphicon-trash" aria-hidden="true"></span>  Delete
+                        </button>
+                    </form>
+                </td>
+              </tr>
+            </table></div>
+      
+              <div class="col-md-6">
+            <a href="#spoiler" data-toggle="collapse" class="btn btn-default">Details</a>
+            <div class="collapse" id="spoiler">
+                <div class="well">
+                    <samp>
+                    time : {{ task.added|date:"H:i:s d M Y" }}<br>
+                    from : {{ task.ip_addr }}
+                    </samp>
+                </div>
+            </div>
+        </div>
+  </div>
+</div>
+
+<div class="row">
+    <div class="col-sm-7">
+        {% for comment in comments %}
+        <div class="comment-area">
+            <small>{{ comment.added|date:"H:i d.m.Y" }}</small>    
+            <div class="comment-body">{{ comment.comment }}</div>
+        </div>
+        {% endfor %}
+    </div>
+    <div class="col-sm-5">
+        <form id="2" action="/task/addcomment/{{ task.id }}/" method="post">
+            {% csrf_token %}
+            <div class="form-group text-right">
+                <textarea rows="5" class="form-control" id="id_comment" maxlength="300" name="comment" style="resize:none"></textarea>
+                <br/>
+                <button type="submit" class="btn btn-primary">
+                    <span class="glyphicon glyphicon-comment" aria-hidden="true"></span>
+                    Add comment
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+<script>
+$(function(){
+    $('#username').editable({
+        url: '/post',
+        title: 'Enter username',
+        params: function(params) {  //params already contain `name`, `value` and `pk`
+        var data = {};
+        data['id'] = params.pk;
+        data[params.name] = params.value;
+        data['csrfmiddlewaretoken'] = '{{ csrf_token }}';
+        return data;
+  }
+    });
+});
+</script>
+{% endblock %}
+
+
+

@@ -1,0 +1,17 @@
+{% extends "main.html" %}
+{% block title %}{{ task.title }}{% endblock %}
+
+{% block menubar %}
+    <a class="btn btn-default" href="/tasks/all"><-- back to tasks</a>
+{% endblock %}
+
+{% block content %}
+
+    <form action="/task/create" method="post">{% csrf_token %}
+    <ul>
+    {{ form.as_ul }}
+    </ul>
+
+{% endblock %}
+
+

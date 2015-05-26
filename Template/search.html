@@ -1,0 +1,45 @@
+{% extends "main.html" %}
+{% block title %}Search{% endblock %}
+
+{% block content %}
+
+{% csrf_token %}
+      <div class="form-group">
+        <label class="col-sm-1 control-label">Search</label>
+        <div class="col-sm-3">
+          <input name="search_text" id="search" type="text" class="form-control"  placeholder="update / migrate etc" />
+        </div>
+          <p class="small" class="text-center">search by task</p>
+      </div>
+
+<table class="table" id="search_results" >
+
+
+</table>
+
+<script>
+$(function(){
+    $('#search').keyup(function(){
+        var currentValue = $(this).val();
+        if(currentValue.length >= 3) {
+            $.ajax({
+                type: "POST",
+                url: "/tasks/search/",
+                data: {
+                    'search_text': currentValue,
+                    'csrfmiddlewaretoken': $("input[name=csrfmiddlewaretoken]").val()  
+                },
+                success: searchSuccess,
+                dataType: 'html'
+            });
+        }
+    });
+});
+ 
+function searchSuccess(data, textStatus, jqXHR)
+{
+    $('#search_results').html(data);
+}
+
+</script>
+{% endblock %}

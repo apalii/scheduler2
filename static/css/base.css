@@ -1,0 +1,19 @@
+#change_status {
+    width: 150px;
+    height: 30px;
+}
+
+.comment-area {
+    padding: .75em;
+    border-radius: 6px;
+    border: 1px solid lightgrey;
+}
+
+.comment-area:not(:last-child) {
+    margin-bottom: 1em;
+}
+
+.comment-area small {
+    font-size: 10px;
+    font-style: italic;
+}
