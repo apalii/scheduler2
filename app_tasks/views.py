@@ -60,8 +60,10 @@ def shift(request):
     today_8 = datetime.datetime(today.year, today.month, today.day, 8, 0, 0)
     tomorrow = today_8 + datetime.timedelta(days=1)
     today = Task.objects.filter(
-        date__gte=today_8).exclude(
-        date__gte=tomorrow).order_by('-date')
+        date__gte=today_8
+    ).exclude(
+        date__gte=tomorrow
+    ).order_by('-date')
     nearest = Task.objects.filter(
         date__gt=datetime.datetime.now())[0:3]
     args = {
