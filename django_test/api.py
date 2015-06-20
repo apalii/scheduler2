@@ -1,7 +1,10 @@
 from tastypie.resources import ModelResource
 from app_tasks.models import Task
-import datetime
+from datetime import datetime as dt
+import datetime 
+import copy
 
+# version 1 
 class TaskAll(ModelResource):
     class Meta:
         queryset = Task.objects.all()
@@ -13,7 +16,11 @@ class TaskAll(ModelResource):
         excludes = ['added', 'ip_addr', 'id']
         allowed_methods = ['get']
 
+    def alter_list_data_to_serialize(self, request, data):
+        data['meta']['current_time_utc'] = dt.strftime(dt.utcnow(), '%Y-%m-%d %H:%M') 
+        return data
 
+    
 class Shift(ModelResource):
     class Meta:
         today = datetime.date.today()
@@ -31,3 +38,14 @@ class Shift(ModelResource):
         #fields = ['username', 'first_name', 'last_name', 'last_login']
         excludes = ['added', 'ip_addr', 'id']
         allowed_methods = ['get']
+
+        
+    def alter_list_data_to_serialize(self, request, data_dict):
+        if isinstance(data_dict, dict):
+            if 'meta' in data_dict:
+                # Get rid of the "meta".
+                del(data_dict['meta'])
+                # Rename the objects.
+                data_dict['shift'] = copy.copy(data_dict['objects'])
+                del(data_dict['objects'])
+        return data_dict
