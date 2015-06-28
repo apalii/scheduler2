@@ -134,14 +134,18 @@ def change_executor(request):
         task_id = request.POST['id']
         name = request.POST['username']
         Task.objects.filter(pk=task_id).update(executor=name)
-    return redirect('/tasks/get/%s/' % task_id)
+        return redirect('/tasks/get/%s/' % task_id)
+    else:
+        raise Http404("What are you looking here ?")
 
 
 def delete_task(request, task_id):
     if request.POST:
         instance = get_object_or_404(Task, id=task_id)
         instance.delete()
-    return redirect('/tasks/all/')
+        return redirect('/tasks/all/')
+    else:
+        raise Http404("What are you looking here ?")
 
 
 def get_cust_id(request):

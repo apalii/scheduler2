@@ -18,7 +18,7 @@ $(document).ready(function() {
 <div class="panel panel-primary">
   <div class="panel-heading">
       <a class="btn btn-default" href="https://rt.portaone.com/Ticket/Display.html?id={{ task.ticket }}" target="_blank">Open ticket in RT</a>
-      <a class="btn btn-default" href="https://rt.portaone.com/Customers/Search/Results.html?Query=Name LIKE '{{ task.customer }}' OR HostName LIKE '{{ task.customer }}' OR HostIP LIKE '{{ task.customer }}'" target="_blank">{{ task.customer }} in RT</a>
+      <a class="btn btn-default" href="https://rt.portaone.com/Customers/Display.html?id={{ task.customer_id }}" target="_blank">{{ task.customer }}</a>
   </div>
   <div class="panel-body">
       <div class="table-responsive">
@@ -41,10 +41,14 @@ $(document).ready(function() {
                         </div>
                     </form>
                 </td>
+                  
+                  
                 <td class="default">
                     <span class="glyphicon glyphicon-time" aria-hidden="true"></span>
                     {{ task.date|date:"H:i d M y"}}
                 </td>
+                  
+                  
                 <td class="default">
                     <span class="glyphicon glyphicon-tasks" aria-hidden="true"></span>
                     {{ task.task|lower}}
