@@ -7,7 +7,7 @@ import copy
 # version 1 
 class TaskAll(ModelResource):
     class Meta:
-        queryset = Task.objects.all()
+        queryset = Task.objects.all().order_by('-date')
         resource_name = 'all'
         filtering = {
             'task': 'contains'

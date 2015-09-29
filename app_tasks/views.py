@@ -1,24 +1,19 @@
 # -*- coding: utf-8 -*-
+
+import datetime
+import json
+import requests
 from django.http import HttpResponse, Http404
-#from django.template.loader import get_template
-#from django.template import Context
-#from django.views.generic.base import TemplateView
-#from django.http import HttpResponseRedirect
 from django.shortcuts import render_to_response, render
 from app_tasks.models import Task, Comment, Customer
-from forms import CommentForm, StatusForm # TaskForm,
+from forms import CommentForm, StatusForm
 from django.core.context_processors import csrf
 from django.shortcuts import redirect, get_object_or_404
 from dateutil.relativedelta import relativedelta
 from django.utils import timezone
-import datetime
-import json
-import requests
-#import subprocess
-
-requests.packages.urllib3.disable_warnings()
 
 
+"""
 def kurs_privat():
     '''Безналичный курс Приватбанка
     (конвертация по картам, Приват24, пополнение вкладов)
@@ -26,7 +21,7 @@ def kurs_privat():
     url = 'https://api.privatbank.ua/p24api/pubinfo?json&exchange&coursid=11'
     kurs = requests.get(url).json()[2]
     return 'buy {} | sale {}'.format(kurs['buy'], kurs['sale'])
-
+    """
 
 def get_ip(request):
     try:
@@ -38,6 +33,14 @@ def get_ip(request):
     except:
         ip = ""
     return ip
+
+def nearest_task_json(request):
+    now = timezone.now()
+    near_task = Task.objects.filter(date__gt=now).order_by('date').values()[0]
+    near_task['date'] = str(near_task['date'])
+    near_task['added'] = str(near_task['added'])
+    response = json.dumps(near_task)
+    return HttpResponse(response, content_type='application/json')
 
 
 def main_page(request):
@@ -51,7 +54,8 @@ def main_page(request):
     return render_to_response('main.html',
                               {'active': 'Home',
                               'near_task': near_task,
-                              'kurs': kurs_beznal,}
+                              'kurs': kurs_beznal,
+                              'user': request.META['REMOTE_USER']}
                               )
 
 
@@ -107,6 +111,7 @@ def task(request, task_id=1):
     args['task'] = get_object_or_404(Task, id=task_id)
     args['comments'] = Comment.objects.filter(
         comments_task_id=task_id)
+    args['added_by'] = Task.objects.get(id=task_id).added_by
     return render_to_response('task.html', args)
 
 
@@ -253,6 +258,7 @@ def add_task(request):
                                           executor=owner,
                                           office=request.POST['office'],
                                           ip_addr=get_ip(request),
+                                          added_by = request.META['REMOTE_USER'],
                                           )
             return redirect('/tasks/get/%s/' % newtask.id)
 

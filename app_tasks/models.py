@@ -31,6 +31,7 @@ class Task(models.Model):
     ticket = models.CharField(max_length=30)
     date = models.DateTimeField()
     added = models.DateTimeField(auto_now_add=True)
+    added_by = models.CharField(max_length=33, default="Unknown")
     customer = models.CharField(max_length=30)
     customer_id = models.CharField(max_length=5, blank=True)
     task = models.CharField(max_length=200)

@@ -36,3 +36,4 @@ class Shift(ModelResource):
         #fields = ['username', 'first_name', 'last_name', 'last_login']
         excludes = ['added', 'ip_addr', 'id']
         allowed_methods = ['get']
+        
