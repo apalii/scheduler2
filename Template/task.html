@@ -90,7 +90,8 @@ $(document).ready(function() {
                 <div class="well">
                     <samp>
                     time : {{ task.added|date:"H:i:s d M Y" }}<br>
-                    from : {{ task.ip_addr }}
+                    from : {{ task.ip_addr }}<br>
+                    added_by : {{ task.added_by }}
                     </samp>
                 </div>
             </div>
