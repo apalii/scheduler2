@@ -18,7 +18,7 @@ def main(request):
 
 def get_city_id(request):
     if request.method == 'GET':
-        print request.GET['q']
+        #print request.GET['q']
         symbols = request.GET['q']
         '''
         cities = City.objects.filter(city_name__startswith=symbols)
