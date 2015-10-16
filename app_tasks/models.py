@@ -16,7 +16,10 @@ class Customer(models.Model):
     class Meta():
         db_table = "customer"
 
+    def __unicode__(self):
+        return "{} : {}".format(self.name, self.cust_rtid)
 
+    
 class Task(models.Model):
 
     STATUSES = (
@@ -68,7 +71,8 @@ class City(models.Model):
 
     def __unicode__(self):
         return "{} : {}".format(self.city_name, self.city_id)
-        
+
+    
 class Ips(models.Model):
     ip = models.GenericIPAddressField(default="0.0.0.0")
     region = models.CharField(max_length=100)

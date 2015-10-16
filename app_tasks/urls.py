@@ -15,6 +15,7 @@ urlpatterns = patterns('',
                        url(r'^getcustid/$', 'app_tasks.views.get_cust_id'),
                        url(r'^get/(?P<task_id>\d+)/$', 'app_tasks.views.task'),
                        url(r'^search/$', 'app_tasks.views.search_tasks'),
-                       url(r'^neartask', 'app_tasks.views.nearest_task_json')
+                       url(r'^neartask', 'app_tasks.views.nearest_task_json'),
+                       url(r'^changedate', 'app_tasks.views.change_date'),
                        
 )

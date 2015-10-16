@@ -45,9 +45,9 @@ $(document).ready(function() {
                   
                 <td class="default">
                     <span class="glyphicon glyphicon-time" aria-hidden="true"></span>
-                    {{ task.date|date:"H:i d M y"}}
-                </td>
-                  
+                    <a href="#" id="date" data-type="text" data-pk="{{ task.id }}" data-url="/task/changedate/" data-title="Change date yyyy-mm-dd hh:mm">
+                        {{ task.date|date:"Y-m-d H:i "}}</a>
+                </td>            
                   
                 <td class="default">
                     <span class="glyphicon glyphicon-tasks" aria-hidden="true"></span>
@@ -127,6 +127,20 @@ $(function(){
     $('#username').editable({
         url: '/post',
         title: 'Enter username',
+        params: function(params) {  //params already contain `name`, `value` and `pk`
+        var data = {};
+        data['id'] = params.pk;
+        data[params.name] = params.value;
+        data['csrfmiddlewaretoken'] = '{{ csrf_token }}';
+        return data;
+  }
+    });
+});
+    
+$(function(){
+    $('#date').editable({
+        url: '/post',
+        title: 'Change date',
         params: function(params) {  //params already contain `name`, `value` and `pk`
         var data = {};
         data['id'] = params.pk;

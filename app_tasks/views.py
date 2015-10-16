@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-import datetime
+import datetime 
 import json
 import requests
 from django.http import HttpResponse, Http404
@@ -12,6 +12,8 @@ from django.shortcuts import redirect, get_object_or_404
 from dateutil.relativedelta import relativedelta
 from django.utils import timezone
 
+import logging
+logr = logging.getLogger(__name__)
 
 """
 def kurs_privat():
@@ -45,7 +47,7 @@ def nearest_task_json(request):
 
 def main_page(request):
     now = timezone.now()
-    kurs_beznal = kurs_privat()
+    #kurs_beznal = kurs_privat()
     #uptime = subprocess.Popen('uptime', shell=True, stdout=subprocess.PIPE).stdout.read().rstrip()
     try:
         near_task = Task.objects.filter(date__gt=now).order_by('date')[0]
@@ -54,7 +56,6 @@ def main_page(request):
     return render_to_response('main.html',
                               {'active': 'Home',
                               'near_task': near_task,
-                              'kurs': kurs_beznal,
                               'user': request.META['REMOTE_USER']}
                               )
 
@@ -137,17 +138,40 @@ def change_status(request, task_id):
 def change_executor(request):
     if request.POST:
         task_id = request.POST['id']
+        old_name = Task.objects.filter(pk=task_id)[0].executor
         name = request.POST['username']
         Task.objects.filter(pk=task_id).update(executor=name)
+        logr.debug("Owner was changed from {} to {} by {}".format(
+                old_name, name, request.META['REMOTE_USER']))
         return redirect('/tasks/get/%s/' % task_id)
     else:
         raise Http404("What are you looking here ?")
 
-
+def change_date(request):
+    if request.POST:
+        task_id = request.POST['id']
+        old_date = Task.objects.filter(pk=task_id)[0].date
+        date = request.POST['date']
+        try:
+            date = timezone.datetime.strptime(date, '%Y-%m-%d %H:%M')
+        except ValueError:
+            raise Http404("Incorrect data ! Expected format : %Y-%m-%d %H:%M")
+        Task.objects.filter(pk=task_id).update(date=date)
+        logr.debug("Date was changed from {} to {} by {}".format(
+                old_date, date, request.META['REMOTE_USER']))
+        return redirect('/tasks/get/%s/' % task_id)
+    else:
+        raise Http404("What are you looking here ?")
+        
+        
 def delete_task(request, task_id):
     if request.POST:
+        task = Task.objects.filter(id=task_id)[0].task
         instance = get_object_or_404(Task, id=task_id)
         instance.delete()
+        logr.debug("Task with id {} was deleted by {}".format(
+                task_id, request.META['REMOTE_USER']))
+        logr.debug("Task content : {}".format(task))
         return redirect('/tasks/all/')
     else:
         raise Http404("What are you looking here ?")
