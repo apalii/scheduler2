@@ -80,6 +80,14 @@
 <div class="alert alert-success">
     <a href="#" class="close" data-dismiss="alert">&times;</a>
     <strong>There are no task for today and the nearest tasks as well !</strong>
-</div
+</div>
 {% endif %}
+<script>
+$(function() {
+    var noTasks = $('.alert.alert-success');
+    if (noTasks) {
+        noTasks.fadeOut(4000);
+    }
+});    
+</script>
 {% endblock %}

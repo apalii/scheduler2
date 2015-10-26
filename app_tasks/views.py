@@ -11,6 +11,7 @@ from django.core.context_processors import csrf
 from django.shortcuts import redirect, get_object_or_404
 from dateutil.relativedelta import relativedelta
 from django.utils import timezone
+from django.views.generic import ListView
 
 import logging
 logr = logging.getLogger(__name__)
@@ -47,8 +48,6 @@ def nearest_task_json(request):
 
 def main_page(request):
     now = timezone.now()
-    #kurs_beznal = kurs_privat()
-    #uptime = subprocess.Popen('uptime', shell=True, stdout=subprocess.PIPE).stdout.read().rstrip()
     try:
         near_task = Task.objects.filter(date__gt=now).order_by('date')[0]
     except IndexError:
@@ -79,6 +78,35 @@ def shift(request):
     return render_to_response('today.html', args)
 
 
+class TasksNew(ListView):
+    model = Task
+    template_name = 'tasks.html'
+    context_object_name = 'tasks'
+    
+    
+    def get_queryset(self):
+        now = timezone.now()
+        qs = Task.objects.order_by('-date')
+        return qs.exclude(date__lt=now)
+
+    
+    def get_context_data(self, **kwargs):
+        context = super(TasksNew, self).get_context_data(**kwargs)
+        context.update({'active': 'Tasks',
+                       'class': self.__class__.__name__,
+                       })
+        return context
+    
+    
+class TasksOld(TasksNew):
+    paginate_by = 10
+    
+    def get_queryset(self):
+        now = timezone.now()
+        qs = Task.objects.filter(date__lt=now).order_by('-date')
+        return qs
+    
+""" 
 def tasks(request):
     month = timezone.now().month
     now = timezone.now()
@@ -88,6 +116,7 @@ def tasks(request):
                               {'tasks': tasks,
                                'tasks_old': tasks_old,
                                'active': 'Tasks'},)
+"""  
 
 
 def month(request):

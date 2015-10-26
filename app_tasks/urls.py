@@ -1,9 +1,10 @@
 __author__ = 'apalii'
 
 from django.conf.urls import patterns, url, include
+from app_tasks.views import TasksNew, TasksOld
 
 urlpatterns = patterns('',
-                       url(r'^all/$', 'app_tasks.views.tasks'),
+                       url(r'^new/$', TasksNew.as_view()),
                        url(r'^shift/$', 'app_tasks.views.shift'),
                        url(r'^month/$', 'app_tasks.views.month'),
                        url(r'^addtask/$', 'app_tasks.views.add_task'),
@@ -17,5 +18,6 @@ urlpatterns = patterns('',
                        url(r'^search/$', 'app_tasks.views.search_tasks'),
                        url(r'^neartask', 'app_tasks.views.nearest_task_json'),
                        url(r'^changedate', 'app_tasks.views.change_date'),
+                       url(r'^old', TasksOld.as_view()),
                        
 )
