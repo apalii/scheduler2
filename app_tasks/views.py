@@ -55,7 +55,6 @@ def nearest_task_json(request):
 @require_safe
 @login_required
 def main_page(request):
-    print request
     now = timezone.now()
     try:
         near_task = Task.objects.filter(date__gt=now).order_by('date')[0]
@@ -166,31 +165,23 @@ def change_status(request, task_id):
 
 @require_POST
 @login_required
-def change_executor(request):
+def change_field(request):
     task_id = request.POST['id']
-    old_name = Task.objects.filter(pk=task_id)[0].executor
-    name = request.POST['username']
-    task = Task.objects.filter(pk=task_id)
-    task.executor = name
-    task.save(update_fields=['executor'])
-    logr.debug("Owner was changed from {} to {} by {}".format(
-            old_name, name, request.user))
-    return redirect('/tasks/get/%s/' % task_id)
-
-
-@require_POST
-@login_required
-def change_date(request):
-    task_id = request.POST['id']
-    old_date = Task.objects.filter(pk=task_id)[0].date
-    date = request.POST['date']
-    try:
-        date = timezone.datetime.strptime(date, '%Y-%m-%d %H:%M')
-    except ValueError:
-        raise Http404("Incorrect data ! Expected format : %Y-%m-%d %H:%M")
-    Task.objects.filter(pk=task_id).update(date=date)
-    logr.debug("Date was changed from {} to {} by {}".format(
-            old_date, date, request.user))
+    field = request.POST['field']
+    if field == 'date':
+        try:
+            date = timezone.datetime.strptime(
+                request.POST[field], '%Y-%m-%d %H:%M'
+            )
+        except ValueError:
+            raise Http404("Expected format : %Y-%m-%d %H:%M")
+    old_field = Task.objects.get(pk=task_id).__dict__.get(field)
+    new_field = request.POST[field]
+    task = Task.objects.get(pk=task_id)
+    setattr(task, field, new_field)
+    task.save(update_fields=[field])
+    logr.debug("{} was changed from {} to {} by {}".format(
+            field, old_field, new_field, request.user))
     return redirect('/tasks/get/%s/' % task_id)
 
 

@@ -44,18 +44,21 @@ $(document).ready(function() {
 
                 <td class="default">
                     <span class="glyphicon glyphicon-time" aria-hidden="true"></span>
-                    <a href="#" id="date" data-type="text" data-pk="{{ task.id }}" data-url="/task/changedate/" data-title="Change date yyyy-mm-dd hh:mm">
+                    <a href="#" class="editable-field" id="date" data-type="text" data-pk="{{ task.id }}" data-url="{% url 'changefield' %}" data-title="Change date yyyy-mm-dd hh:mm">
                         {{ task.date|date:"Y-m-d H:i "}}</a>
                   </td>
 
                 <td class="default">
                     <span class="glyphicon glyphicon-tasks" aria-hidden="true"></span>
-                    {{ task.task|lower}}
-                </td>
+                    <a href="#" class="editable-field" id="task" data-type="text" data-pk="{{ task.id }}" data-url="{% url 'changefield' %}" data-title="Change task">
+                        {{ task.task|lower }}</a>
+                  </td>
+
                 <td class="default">
                     <span class="glyphicon glyphicon-user" aria-hidden="true"></span>
-                    <a href="#" id="username" data-type="text" data-pk="{{ task.id }}" data-url="/task/changeowner/" data-title="Enter username">{{ task.executor }}</a>
+                    <a href="#" class="editable-field" id="executor" data-type="text" data-pk="{{ task.id }}" data-url="{% url 'changefield' %}" data-title="Enter executor name">{{ task.executor }}</a>
                 </td>
+
                   <td class="default">
                     {% if task.status|lower == 'done' %}
 
@@ -123,31 +126,19 @@ $(document).ready(function() {
 </div>
 <script>
 $(function(){
-    $('#username').editable({
+    $('.editable-field').editable({
         url: '/post',
-        title: 'Enter username',
+        title: 'Enter executor',
         params: function(params) {  //params already contain `name`, `value` and `pk`
         var data = {};
         data['id'] = params.pk;
+        data['field'] = params.name;
         data[params.name] = params.value;
         data['csrfmiddlewaretoken'] = '{{ csrf_token }}';
         return data;
   }
     });
 });
-    
-$(function(){
-    $('#date').editable({
-        url: '/post',
-        title: 'Change date',
-        params: function(params) {  //params already contain `name`, `value` and `pk`
-        var data = {};
-        data['id'] = params.pk;
-        data[params.name] = params.value;
-        data['csrfmiddlewaretoken'] = '{{ csrf_token }}';
-        return data;
-  }
-    });
-});
+
 </script>
 {% endblock %}
