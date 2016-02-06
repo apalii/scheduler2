@@ -1,35 +1,28 @@
-from django.shortcuts import redirect, render_to_response
+from django.shortcuts import redirect, render_to_response, render
 from django.core.context_processors import csrf
-from django.http import HttpResponse, Http404
+from django.http import HttpResponse, Http404, JsonResponse
 from app_tasks.models import City
-#from django.core import serializers
-import json
+
 
 def main(request):
     args = {}
     args['active'] = 'Zones'
     args.update(csrf(request))
-
     if request.method == 'GET':
-        return render_to_response('tz.html', args)
+        return render(request, 'tz.html', args)
     else:
         return redirect('/tz/main/')
 
 
 def get_city_id(request):
     if request.method == 'GET':
-        #print request.GET['q']
         symbols = request.GET['q']
-        '''
-        cities = City.objects.filter(city_name__startswith=symbols)
-        data = serializers.serialize('json', cities)
-        return HttpResponse(data, content_type='application/json')
-    else:
-        return redirect('/tz/main/')'''
-        response = json.dumps([city.city_name
-                               for city in City.objects.filter(city_name__startswith=symbols)])
-
-        return HttpResponse(response, content_type='application/json')
+        response = [
+            city.city_name for city in City.objects.filter(
+                city_name__startswith=symbols
+            )
+        ]
+        return JsonResponse(response, safe=False)
     elif request.method == 'POST':
         base_url = 'http://www.timeanddate.com/worldclock/converted.html'
         date_post = request.POST['date']

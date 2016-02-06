@@ -96,15 +96,24 @@ TEMPLATE_LOADERS = (
 )
 
 MIDDLEWARE_CLASSES = (
+    # LDAP auth emulation
     'django_test.middleware.SetRemoteAddr',
-    'django.middleware.common.CommonMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
-    'django.middleware.csrf.CsrfViewMiddleware',
+    # REMOTE_USER auth middleware
     'django.contrib.auth.middleware.AuthenticationMiddleware',
+    'django.contrib.auth.middleware.RemoteUserMiddleware',
+
+    'django.middleware.common.CommonMiddleware',
+    'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     # 'django.middleware.locale.LocaleMiddleware',
     # Uncomment the next line for simple clickjacking protection:
     # 'django.middleware.clickjacking.XFrameOptionsMiddleware',
+)
+
+
+AUTHENTICATION_BACKENDS = (
+    'django.contrib.auth.backends.RemoteUserBackend',
 )
 
 ROOT_URLCONF = 'django_test.urls'

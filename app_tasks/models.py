@@ -1,4 +1,5 @@
 from django.db import models
+from django.contrib.auth.models import User
 
 '''
 Migrations :
@@ -19,7 +20,7 @@ class Customer(models.Model):
     def __unicode__(self):
         return "{} : {}".format(self.name, self.cust_rtid)
 
-    
+
 class Task(models.Model):
 
     STATUSES = (
@@ -31,6 +32,7 @@ class Task(models.Model):
         (u'Cancelled', u'Cancelled'),
         (u'Failed', u'Failed'),
     )
+    task_user = models.ForeignKey(User, related_name="task_user_id", default="1")
     ticket = models.CharField(max_length=30)
     date = models.DateTimeField()
     added = models.DateTimeField(auto_now_add=True)
@@ -56,6 +58,7 @@ class Comment(models.Model):
     comment = models.TextField(max_length=800)
     comments_task = models.ForeignKey(Task)
     added = models.DateTimeField(auto_now_add=True)
+    added_by = models.CharField(max_length=33, default="Unknown")
 
     class Meta():
         db_table = 'comment'
@@ -72,7 +75,7 @@ class City(models.Model):
     def __unicode__(self):
         return "{} : {}".format(self.city_name, self.city_id)
 
-    
+
 class Ips(models.Model):
     ip = models.GenericIPAddressField(default="0.0.0.0")
     region = models.CharField(max_length=100)
@@ -80,6 +83,6 @@ class Ips(models.Model):
 
     def __unicode__(self):
         return "{} : {}".format(str(self.counter), str(self.ip))
-    
+
     class Meta():
         db_table = 'ips'

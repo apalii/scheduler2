@@ -19,5 +19,5 @@ urlpatterns = patterns('',
                        url(r'^neartask', 'app_tasks.views.nearest_task_json'),
                        url(r'^changedate', 'app_tasks.views.change_date'),
                        url(r'^old', TasksOld.as_view()),
-                       
+
 )

@@ -11,7 +11,7 @@
 $(document).ready(function() {
     //toggle `popup` / `inline` mode
     $.fn.editable.defaults.mode = 'inline';
-        </script>
+</script>
 {% endblock %}
 
 {% block content %}<br>
@@ -41,14 +41,13 @@ $(document).ready(function() {
                         </div>
                     </form>
                 </td>
-                  
-                  
+
                 <td class="default">
                     <span class="glyphicon glyphicon-time" aria-hidden="true"></span>
                     <a href="#" id="date" data-type="text" data-pk="{{ task.id }}" data-url="/task/changedate/" data-title="Change date yyyy-mm-dd hh:mm">
                         {{ task.date|date:"Y-m-d H:i "}}</a>
-                </td>            
-                  
+                  </td>
+
                 <td class="default">
                     <span class="glyphicon glyphicon-tasks" aria-hidden="true"></span>
                     {{ task.task|lower}}
@@ -59,7 +58,7 @@ $(document).ready(function() {
                 </td>
                   <td class="default">
                     {% if task.status|lower == 'done' %}
-                        
+
                             <span class="glyphicon glyphicon-ok" aria-hidden="true"></span>
                             {{ task.status }}
                         {% elif 'In' in task.status or 'Post' in task.status  or 'Part' in task.status %}
@@ -70,9 +69,9 @@ $(document).ready(function() {
                                {{ task.status }}
                         {% else %}
                                 <span class="glyphicon glyphicon-ban-circle" aria-hidden="true"></span>
-                               {{ task.status }}       
+                               {{ task.status }}
                     {% endif %}
-                   </td>    
+                   </td>
                 <td class="default">
                         <form class="form-horizontal" id="delete" action="/task/delete/{{ task.id }}/" method="post">
                         {% csrf_token %}
@@ -83,7 +82,7 @@ $(document).ready(function() {
                 </td>
               </tr>
             </table></div>
-      
+
               <div class="col-md-6">
             <a href="#spoiler" data-toggle="collapse" class="btn btn-default">Details</a>
             <div class="collapse" id="spoiler">
@@ -103,7 +102,7 @@ $(document).ready(function() {
     <div class="col-sm-7">
         {% for comment in comments %}
         <div class="comment-area">
-            <small>{{ comment.added|date:"H:i d.m.Y" }}</small>    
+            <small>{{ comment.added|date:"H:i d.m.Y" }} by {{ comment.added_by }}</small>
             <div class="comment-body">{{ comment.comment }}</div>
         </div>
         {% endfor %}
@@ -152,6 +151,3 @@ $(function(){
 });
 </script>
 {% endblock %}
-
-
-
