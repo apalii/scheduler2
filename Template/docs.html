@@ -23,7 +23,7 @@
                             <li>shift entity added</li>
                             <li>office lookup added</li>
                         </ul>
-                        
+
                         <p><h4>25-05-2015</h4>
                         <ul>
                             <li>New representation of the task page (inherited from main template)</li>
@@ -37,22 +37,22 @@
                             <li>make search form user-friendly (add notes/etc)</li>
                             <li>smaller rows	redesign tables</li>
                             <li>'UTC' timezone as a city (timezones tab)</li>
-                        </ul>                                       
+                        </ul>
                     </div>
                     <div class="tab-pane fade " id="tab-2">
-                        
+
                         <p><br>http://yourdomain.com/api/$version/$entity/$format & $filtering<br><br>
-                            
+
                         api version = v1<br>
                         entity = 'all'  or  'shift'<br>
                         format = ?format=json or ?format=xml<br>
-                        lookup(filtering) = &office=1..3  or &all__contains=update<br><br>                        
+                        lookup(filtering) = &office=1..3  or &all__contains=update<br><br>
                         Examples:</p><br>
-                        
-                        <a href="http://tasks-215255.euw1.nitrousbox.com/api/v1/all/?format=json">/all/?format=json</a><br>
-                        <a href="http://tasks-215255.euw1.nitrousbox.com/api/v1/all/?format=json&all__contains=update">/all/?format=json&all__contains=update</a><br><br>
-                        <a href="http://tasks-215255.euw1.nitrousbox.com/api/v1/shift/?format=json">/shift/?format=json</a><br>
-                        <a href="http://tasks-215255.euw1.nitrousbox.com/api/v1/shift/?format=json&office=2">/shift/?format=json&office=2</a><br>
+
+                        <a href="{{ request.get_host }}/api/v1/all/?format=json">/all/?format=json</a><br>
+                        <a href="{{ request.get_host }}/api/v1/all/?format=json&all__contains=update">/all/?format=json&all__contains=update</a><br><br>
+                        <a href="{{ request.get_host }}/api/v1/shift/?format=json">/shift/?format=json</a><br>
+                        <a href="{{ request.get_host }}/api/v1/shift/?format=json&office=2">/shift/?format=json&office=2</a><br>
                     </div>
                     <div class="tab-pane fade" id="tab-3">
                         <p>text3</p>

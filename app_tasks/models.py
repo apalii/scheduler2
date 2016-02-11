@@ -21,6 +21,27 @@ class Customer(models.Model):
         return "{} : {}".format(self.name, self.cust_rtid)
 
 
+class Engineer(models.Model):
+
+    OFFICES = (
+        (u'c', u'Chernihiv'),
+        (u'k', u'Kyiv'),
+        (u's', u'Sumy'),
+    )
+
+    POSITIONS = (
+        (u'jse', u'Junior Support Engineer'),
+        (u'mse', u'Middle Support Engineer'),
+        (u'sse', u'Senior Support Engineer'),
+        (u'tm', u'Team Lead'),
+        (u'u', u'unspecified')
+    )
+
+    user = models.OneToOneField(User)
+    office = models.CharField(choices=OFFICES, max_length=1, default='c')
+    position = models.CharField(choices=POSITIONS, max_length=3, default='u')
+
+
 class Task(models.Model):
 
     STATUSES = (
@@ -32,6 +53,7 @@ class Task(models.Model):
         (u'Cancelled', u'Cancelled'),
         (u'Failed', u'Failed'),
     )
+
     task_user = models.ForeignKey(User, related_name="task_user_id", default="1")
     ticket = models.CharField(max_length=30)
     date = models.DateTimeField()
@@ -66,6 +88,7 @@ class Comment(models.Model):
 
 
 class City(models.Model):
+
     city_name = models.CharField(max_length=100)
     city_id = models.CharField(max_length=4)
 
@@ -77,6 +100,7 @@ class City(models.Model):
 
 
 class Ips(models.Model):
+
     ip = models.GenericIPAddressField(default="0.0.0.0")
     region = models.CharField(max_length=100)
     counter = models.IntegerField(default=1)

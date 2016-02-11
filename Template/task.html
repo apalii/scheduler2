@@ -4,13 +4,13 @@
 
 {% block additional_js %}
 <link href={% static "css/base.css" %} rel="stylesheet" />
-    <!-- x-editable (bootstrap version) -->
-<link href="http://vitalets.github.io/x-editable/assets/x-editable/bootstrap3-editable/css/bootstrap-editable.css" rel="stylesheet">
-        <script src="http://vitalets.github.io/x-editable/assets/x-editable/bootstrap3-editable/js/bootstrap-editable.js"></script>
+<link href="//cdnjs.cloudflare.com/ajax/libs/x-editable/1.5.1/bootstrap3-editable/css/bootstrap-editable.css" rel="stylesheet"/>
+<script src="//cdnjs.cloudflare.com/ajax/libs/x-editable/1.5.1/bootstrap3-editable/js/bootstrap-editable.min.js"></script>
 <script>
 $(document).ready(function() {
     //toggle `popup` / `inline` mode
-    $.fn.editable.defaults.mode = 'inline';
+    $.fn.editable.defaults.mode = 'popup';
+});
 </script>
 {% endblock %}
 
@@ -86,7 +86,7 @@ $(document).ready(function() {
               </tr>
             </table></div>
 
-              <div class="col-md-6">
+            <div class="col-md-6">
             <a href="#spoiler" data-toggle="collapse" class="btn btn-default">Details</a>
             <div class="collapse" id="spoiler">
                 <div class="well">
@@ -128,7 +128,10 @@ $(document).ready(function() {
 $(function(){
     $('.editable-field').editable({
         url: '/post',
-        title: 'Enter executor',
+        title: 'Correct values',
+        success: function(response, newValue) {
+            if(response.status == 'error') return response.msg; //msg will be shown in editable form
+        },
         params: function(params) {  //params already contain `name`, `value` and `pk`
         var data = {};
         data['id'] = params.pk;

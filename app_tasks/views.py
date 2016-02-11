@@ -174,7 +174,8 @@ def change_field(request):
                 request.POST[field], '%Y-%m-%d %H:%M'
             )
         except ValueError:
-            raise Http404("Expected format : %Y-%m-%d %H:%M")
+            err = "Expected format : %Y-%m-%d %H:%M"
+            return JsonResponse({'status': 'error', 'msg': err})
     old_field = Task.objects.get(pk=task_id).__dict__.get(field)
     new_field = request.POST[field]
     task = Task.objects.get(pk=task_id)
@@ -182,19 +183,19 @@ def change_field(request):
     task.save(update_fields=[field])
     logr.debug("{} was changed from {} to {} by {}".format(
             field, old_field, new_field, request.user))
-    return redirect('/tasks/get/%s/' % task_id)
+    return HttpResponse('')
 
 
 @require_POST
 @login_required
 def delete_task(request, task_id):
-    task = Task.objects.filter(id=task_id)[0].task
+    task = Task.objects.get(id=task_id).task
     instance = get_object_or_404(Task, id=task_id)
     instance.delete()
     logr.debug("Task with id {} was deleted by {}".format(
             task_id, request.user))
     logr.debug("Task content : {}".format(task))
-    return redirect('/tasks/all/')
+    return redirect('add')
 
 
 @require_safe
