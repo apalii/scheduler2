@@ -99,14 +99,14 @@ class City(models.Model):
         return "{} : {}".format(self.city_name, self.city_id)
 
 
-class Ips(models.Model):
+class Log(models.Model):
 
-    ip = models.GenericIPAddressField(default="0.0.0.0")
-    region = models.CharField(max_length=100)
-    counter = models.IntegerField(default=1)
+    log_task = models.ForeignKey(Task)
+    message = models.CharField(max_length=300)
+    date = models.DateTimeField()
 
     def __unicode__(self):
-        return "{} : {}".format(str(self.counter), str(self.ip))
+        return "{}".format(self.message)
 
     class Meta():
-        db_table = 'ips'
+        db_table = 'log'

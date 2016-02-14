@@ -5,7 +5,7 @@ import json
 import requests
 from django.http import HttpResponse, Http404, JsonResponse
 from django.shortcuts import render_to_response, render
-from app_tasks.models import Task, Comment, Customer
+from app_tasks.models import Task, Comment, Customer, Log
 from forms import CommentForm, StatusForm
 from django.core.context_processors import csrf
 from django.shortcuts import redirect, get_object_or_404
@@ -17,18 +17,14 @@ from django.views.decorators.http import (
     require_http_methods, require_safe, require_POST
 )
 
-import logging
-logr = logging.getLogger(__name__)
 
-"""
-def kurs_privat():
-    '''Безналичный курс Приватбанка
-    (конвертация по картам, Приват24, пополнение вкладов)
-    '''
-    url = 'https://api.privatbank.ua/p24api/pubinfo?json&exchange&coursid=11'
-    kurs = requests.get(url).json()[2]
-    return 'buy {} | sale {}'.format(kurs['buy'], kurs['sale'])
-    """
+def logging(task_id, message):
+    task = Task.objects.get(pk=task_id)
+    new_log = Log.objects.create(
+        log_task=task, message=message, date=timezone.now()
+    )
+    return
+
 
 def get_ip(request):
     try:
@@ -60,7 +56,8 @@ def main_page(request):
         near_task = Task.objects.filter(date__gt=now).order_by('date')[0]
     except IndexError:
         near_task = None
-    args = {'active': 'Home','near_task': near_task}
+    logs = Log.objects.all().order_by('-date')[:5]
+    args = {'active': 'Home','near_task': near_task, 'logs': logs}
     return render(request, 'main.html', args)
 
 
@@ -136,6 +133,7 @@ def task(request, task_id=1):
     args['comments'] = Comment.objects.filter(
         comments_task_id=task_id)
     args['added_by'] = Task.objects.get(id=task_id).added_by
+    args['logs'] = Log.objects.filter(log_task=task_id).order_by('-date')
     return render(request, 'task.html', args)
 
 
@@ -177,12 +175,16 @@ def change_field(request):
             err = "Expected format : %Y-%m-%d %H:%M"
             return JsonResponse({'status': 'error', 'msg': err})
     old_field = Task.objects.get(pk=task_id).__dict__.get(field)
+    old_field_clened = timezone.localtime(old_field).__str__()[
+        :old_field.__str__().find('+')] if field == 'date' else old_field
     new_field = request.POST[field]
     task = Task.objects.get(pk=task_id)
     setattr(task, field, new_field)
     task.save(update_fields=[field])
-    logr.debug("{} was changed from {} to {} by {}".format(
-            field, old_field, new_field, request.user))
+    to_log = "{} was changed from {} to {} by {}".format(
+        field, old_field_clened, new_field, request.user
+    )
+    logging(task.id, to_log)
     return HttpResponse('')
 
 
@@ -192,9 +194,8 @@ def delete_task(request, task_id):
     task = Task.objects.get(id=task_id).task
     instance = get_object_or_404(Task, id=task_id)
     instance.delete()
-    logr.debug("Task with id {} was deleted by {}".format(
-            task_id, request.user))
-    logr.debug("Task content : {}".format(task))
+    to_log = "Task with id {} was deleted by {}".format(task_id, request.user)
+    logging(request.user.id, to_log)
     return redirect('add')
 
 

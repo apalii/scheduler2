@@ -98,6 +98,7 @@ TEMPLATE_LOADERS = (
 MIDDLEWARE_CLASSES = (
     # LDAP auth emulation
     'django_test.middleware.SetRemoteAddr',
+
     'django.contrib.sessions.middleware.SessionMiddleware',
     # REMOTE_USER auth middleware
     'django.contrib.auth.middleware.AuthenticationMiddleware',
@@ -164,7 +165,7 @@ LOGGING = {
         },
     },
     'loggers': {
-        
+
         '': {
             'handlers': ['default'],
             'level': 'DEBUG',

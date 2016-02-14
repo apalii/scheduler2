@@ -13,7 +13,6 @@ $(document).ready(function() {
 });
 </script>
 {% endblock %}
-
 {% block content %}<br>
 <div class="panel panel-primary">
   <div class="panel-heading">
@@ -124,6 +123,11 @@ $(document).ready(function() {
         </form>
     </div>
 </div>
+    {% if logs %}
+        {% for log in logs %}
+            {{log.message}} {{log.date|date:"H:i d.m.Y"}}</br>
+        {% endfor %}
+    {% endif %}
 <script>
 $(function(){
     $('.editable-field').editable({

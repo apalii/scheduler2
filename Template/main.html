@@ -8,6 +8,7 @@
   <title>{% block title %}Main{% endblock %}</title>
   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous">
   <link href={% static "css/justified-nav.css" %} rel="stylesheet" />
+  <link href='//fonts.googleapis.com/css?family=PT+Sans:400,700' rel='stylesheet' type='text/css'>
   <script src="http://code.jquery.com/jquery-2.0.3.min.js"></script>
   <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js" integrity="sha384-0mSbJDEHialfmuBBQP6A4Qrprq5OVfW37PRR3j5ELqxss1yVqOtnepnHVP9aJ7xS" crossorigin="anonymous"></script>
 
@@ -37,7 +38,6 @@
 {% endblock %}
 
 {% block content %}
-
 {% if near_task %}
     <ul class="text-center">
     <iframe src="http://free.timeanddate.com/countdown/i4mcooym/n367/cf12/cm0/cu4/ct0/cs0/ca0/co1/cr0/ss0/cac000/cpc000/pcfff/tcfff/fn2/fs120/szw576/szh243/tatNearest%20task%20in/tac000/tptTime%20since%20Event%20started%20in/tpc000/iso{{ near_task.date|date:"Y-m-d" }}T{{ near_task.date|date:"H:i" }}:00" allowTransparency="true" frameborder="0" width="219" height="99"></iframe>
@@ -48,7 +48,18 @@
     </div>
 {% endif%}
 
+
+<div class="log-area">
+{% if user.is_superuser %}
+    {% if logs %}
+        {% for log in logs %}
+            {{log.message}} {{log.date}} | <a href="/tasks/get/{{ log.log_task_id }}/">open</a></br>
+        {% endfor %}
+    {% endif %}
+{% endif %}
+</div>
 {% endblock %}
+
 
 <br><br>
     <footer class="footer">
@@ -59,6 +70,7 @@
         <a href="/tasks/old">Archive</a></br>
     </footer>
 </div>
+
 </body>
 </html>
 
