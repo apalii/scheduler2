@@ -57,7 +57,12 @@ def main_page(request):
     except IndexError:
         near_task = None
     logs = Log.objects.all().order_by('-date')[:5]
-    args = {'active': 'Home','near_task': near_task, 'logs': logs}
+    args = {
+        'active': 'Home',
+        'near_task': near_task,
+        'logs': logs,
+        'year': now.year
+    }
     return render(request, 'main.html', args)
 
 
@@ -79,7 +84,7 @@ def shift(request):
         'today': today,
         'nearest': nearest
     }
-    return render(request, 'today.html', args)
+    return render(request, 'shift.html', args)
 
 
 class TasksNew(ListView):
@@ -90,7 +95,7 @@ class TasksNew(ListView):
 
     def get_queryset(self):
         now = timezone.now()
-        qs = Task.objects.order_by('-date')
+        qs = Task.objects.order_by('date')
         return qs.exclude(date__lt=now)
 
 
@@ -115,7 +120,7 @@ class TasksOld(TasksNew):
 def month(request):
     this_month = timezone.now().month
     tasks = Task.objects.filter(
-        date__month=this_month).order_by('-date')
+        date__month=this_month).order_by('date')
     return render(
         request, 'month.html', {'month': tasks, 'active': 'Month'}
     )
@@ -191,11 +196,12 @@ def change_field(request):
 @require_POST
 @login_required
 def delete_task(request, task_id):
-    task = Task.objects.get(id=task_id).task
-    instance = get_object_or_404(Task, id=task_id)
-    instance.delete()
-    to_log = "Task with id {} was deleted by {}".format(task_id, request.user)
-    logging(request.user.id, to_log)
+    task = Task.objects.get(id=task_id)
+    to_log = "Task: '{}' was deleted by {}".format(task.task, request.user)
+    new_log = Log.objects.create(
+        log_task=task, message=to_log, date=timezone.now()
+    )
+    task.delete()
     return redirect('add')
 
 

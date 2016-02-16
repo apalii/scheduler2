@@ -1,7 +1,7 @@
 __author__ = 'apalii'
 
 from django.contrib import admin
-from app_tasks.models import Task, Comment, Customer, Engineer
+from app_tasks.models import Task, Comment, Customer, Engineer, Log
 
 from django.contrib.auth.admin import UserAdmin as BaseUserAdmin
 from django.contrib.auth.models import User
@@ -25,6 +25,25 @@ class EngineerInline(admin.StackedInline):
     verbose_name_plural = 'engineers'
 
 
+class LogAdmin(admin.ModelAdmin):
+    """
+    log_task = models.ForeignKey(Task)
+    message = models.CharField(max_length=300)
+    date = models.DateTimeField()
+    """
+    list_display = ('message', 'date')
+
+    def has_add_permission(self, request):
+        return False
+
+
+
+class LogInline(admin.StackedInline):
+    model = Log
+    can_delete = False
+    verbose_name_plural = 'logs'
+
+
 # Define a new User admin
 class UserAdmin(BaseUserAdmin):
     inlines = (EngineerInline, )
@@ -32,6 +51,7 @@ class UserAdmin(BaseUserAdmin):
 
 admin.site.register(Task, TaskAdmin)
 admin.site.register(Customer)
+admin.site.register(Log, LogAdmin)
 # Re-register UserAdmin
 admin.site.unregister(User)
 admin.site.register(User, UserAdmin)

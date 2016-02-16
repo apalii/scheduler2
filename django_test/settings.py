@@ -1,8 +1,13 @@
 import os
+
+PRODUCTION = False
 BASE_DIR = os.path.dirname(os.path.dirname(__file__))
 
-DEBUG = True
+DEBUG = True if PRODUCTION == False else False
 TEMPLATE_DEBUG = DEBUG
+
+if PRODUCTION:
+    ALLOWED_HOSTS = ['task.portaone.com']
 
 # Tastypie settings
 API_LIMIT_PER_PAGE = 15
@@ -86,7 +91,8 @@ STATICFILES_FINDERS = (
 )
 
 # Make this unique, and don't share it with anybody.
-SECRET_KEY = 'hwdmj086r-tue9szr&amp;uab!bx#d#4!#z-aw-dd15v6o)4o(=pg2'
+SECRET_KEY = os.environ['SECRET_KEY']
+
 
 # List of callables that know how to import templates from various sources.
 TEMPLATE_LOADERS = (
@@ -95,7 +101,7 @@ TEMPLATE_LOADERS = (
 #     'django.template.loaders.eggs.Loader',
 )
 
-MIDDLEWARE_CLASSES = (
+MC = (
     # LDAP auth emulation
     'django_test.middleware.SetRemoteAddr',
 
@@ -111,7 +117,7 @@ MIDDLEWARE_CLASSES = (
     # Uncomment the next line for simple clickjacking protection:
     # 'django.middleware.clickjacking.XFrameOptionsMiddleware',
 )
-
+MIDDLEWARE_CLASSES = MC[1:] if PRODUCTION == True else MC
 
 AUTHENTICATION_BACKENDS = (
     'django.contrib.auth.backends.RemoteUserBackend',

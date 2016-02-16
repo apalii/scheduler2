@@ -3,7 +3,6 @@
 {% block title %}{{ task.title }}{% endblock %}
 
 {% block additional_js %}
-<link href={% static "css/base.css" %} rel="stylesheet" />
 <link href="//cdnjs.cloudflare.com/ajax/libs/x-editable/1.5.1/bootstrap3-editable/css/bootstrap-editable.css" rel="stylesheet"/>
 <script src="//cdnjs.cloudflare.com/ajax/libs/x-editable/1.5.1/bootstrap3-editable/js/bootstrap-editable.min.js"></script>
 <script>
@@ -123,11 +122,19 @@ $(document).ready(function() {
         </form>
     </div>
 </div>
+<div class="log-area">
+{% if user.is_superuser %}
     {% if logs %}
+    <div class="col-sm-6">
+        <ul>
         {% for log in logs %}
-            {{log.message}} {{log.date|date:"H:i d.m.Y"}}</br>
+            <li>{{log.message}} | {{log.date}}</li>
         {% endfor %}
+        </ul>
+    </div>
     {% endif %}
+{% endif %}
+</div>
 <script>
 $(function(){
     $('.editable-field').editable({
@@ -146,6 +153,5 @@ $(function(){
   }
     });
 });
-
 </script>
 {% endblock %}

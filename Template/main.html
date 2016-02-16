@@ -8,6 +8,7 @@
   <title>{% block title %}Main{% endblock %}</title>
   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous">
   <link href={% static "css/justified-nav.css" %} rel="stylesheet" />
+  <link href={% static "css/base.css" %} rel="stylesheet" />
   <link href='//fonts.googleapis.com/css?family=PT+Sans:400,700' rel='stylesheet' type='text/css'>
   <script src="http://code.jquery.com/jquery-2.0.3.min.js"></script>
   <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js" integrity="sha384-0mSbJDEHialfmuBBQP6A4Qrprq5OVfW37PRR3j5ELqxss1yVqOtnepnHVP9aJ7xS" crossorigin="anonymous"></script>
@@ -21,7 +22,9 @@
 <div class="container-fluid">
     {% block menubar %}
       <div class="masthead">
-        <h3 class="text-muted">Scheduler 2.0<small> {{ user }} </small></h3>
+        <h3 class="text-muted">Scheduler 2.0
+            <small>{{ user }}</small><span id="user" class="glyphicon glyphicon-user"></span>
+        </h3>
         <nav>
           <ul class="nav nav-justified">
             <li {% if active == "Home" %} class="active" {% endif %}><a href="/">Home</a></li>
@@ -42,28 +45,21 @@
     <ul class="text-center">
     <iframe src="http://free.timeanddate.com/countdown/i4mcooym/n367/cf12/cm0/cu4/ct0/cs0/ca0/co1/cr0/ss0/cac000/cpc000/pcfff/tcfff/fn2/fs120/szw576/szh243/tatNearest%20task%20in/tac000/tptTime%20since%20Event%20started%20in/tpc000/iso{{ near_task.date|date:"Y-m-d" }}T{{ near_task.date|date:"H:i" }}:00" allowTransparency="true" frameborder="0" width="219" height="99"></iframe>
     </ul>
+<div class="neartask-area">
+    Customer: {{ near_task.customer }}</br>{{ near_task.task }}</br><a href="/tasks/get/{{ near_task.id }}/">Go to task</a></br>
+</div>
 {% else %}
     <div class="alert alert-danger" role="alert">
         There are no tasks. Please add a new one.
     </div>
 {% endif%}
 
-
-<div class="log-area">
-{% if user.is_superuser %}
-    {% if logs %}
-        {% for log in logs %}
-            {{log.message}} {{log.date}} | <a href="/tasks/get/{{ log.log_task_id }}/">open</a></br>
-        {% endfor %}
-    {% endif %}
-{% endif %}
-</div>
 {% endblock %}
 
 
 <br><br>
     <footer class="footer">
-    <p>&copy; PortaOne 2015</p>
+    <p>&copy; PortaOne {{ year }}</p>
         <a href="mailto:dezz.ua@gmail.com">Contact author</a></br>
         <a href="https://wiki.portaone.com/display/~apalii/Scheduler+2.0" target=_blank>Wiki</a></br>
         <a href="/docs" target=_blank>Docs</a></br>

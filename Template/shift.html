@@ -1,5 +1,5 @@
 {% extends "main.html" %}
-{% block title %}Today{% endblock %}
+{% block title %}Shift{% endblock %}
 
 {% block content %}
 
@@ -8,19 +8,29 @@
     <div class="panel-heading"><h5>Today</h5></div>
     <div class="panel-body">
         <div class="table-responsive">
-        <table class="table">
-{% for task in today %}
+
+<table class="table table-bordered">
+  <tr class="text-center">
+    <td class="info" width="200" >Ticket</td>
+    <td class="info" width="200" >Date</td>
+    <td class="info" width="200" >Customer</td>
+    <td class="info">Task</td>
+    <td class="info" width="120">Executor</td>
+    <td class="info" width="120">Status</td>
+  </tr>
+    {% for task in today %}
       <tr class="text-center">
-        <td class="default">
+        <td class="active">
           <a href="https://rt.portaone.com/Ticket/Display.html?id={{ task.ticket }}" target="_blank">{{ task.ticket }}</a>
           <a href="/tasks/get/{{ task.id }}/">detail</a>
+            <!--<span class="badge">14</span>-->
         </td>
-        <td class="default">{{ task.date|date:"H:i d.m.Y" }}</td>
-        <td class="default">
+        <td class="active">{{ task.date|date:"H:i d M y" }}</td>
+        <td class="active">
             <a href="https://rt.portaone.com/Customers/Display.html?id={{ task.customer_id }}" target="_blank">{{ task.customer }}</a>
         </td>
-        <td class="default">{{ task.task|lower|truncatewords:'3' }}</td>
-        <td class="default">{{ task.executor }}</td>
+        <td class="active">{{ task.task|lower|truncatewords:'3' }}</td>
+        <td class="active">{{ task.executor }}</td>
         {% if task.status|lower == 'done' %}
             <td class="success">{{ task.status }}</td>
         {% elif 'In' in task.status or 'Post' in task.status  or 'Part' in task.status %}
@@ -29,11 +39,13 @@
            <td class="default">{{ task.status }}</td>
         {% else %}
            <td class="danger">{{ task.status }}</td>
-        </tr>
         {% endif %}
+      </tr>
     {% endfor %}
-        </table>
-        </div>    
+</table>
+
+
+        </div>
     </div>
 </div>
 {% elif nearest|length > 0 %}
@@ -47,19 +59,30 @@
     <div class="panel-heading"><h5>Nearest</h5></div>
     <div class="panel-body">
         <div class="table-responsive">
-        <table class="table">
-{% for task in nearest %}
+
+
+<table class="table table-bordered">
+  <tr class="text-center">
+    <td class="info" width="200" >Ticket</td>
+    <td class="info" width="200" >Date</td>
+    <td class="info" width="200" >Customer</td>
+    <td class="info">Task</td>
+    <td class="info" width="120">Executor</td>
+    <td class="info" width="120">Status</td>
+  </tr>
+    {% for task in nearest %}
       <tr class="text-center">
-        <td class="default">
+        <td class="active">
           <a href="https://rt.portaone.com/Ticket/Display.html?id={{ task.ticket }}" target="_blank">{{ task.ticket }}</a>
           <a href="/tasks/get/{{ task.id }}/">detail</a>
+            <!--<span class="badge">14</span>-->
         </td>
-        <td class="default">{{ task.date|date:"H:i d.m.Y" }}</td>
-        <td class="default">
-            <a  href="https://rt.portaone.com/Customers/Display.html?id={{ task.customer_id }}" target="_blank">{{ task.customer }}</a>
+        <td class="active">{{ task.date|date:"H:i d M y" }}</td>
+        <td class="active">
+            <a href="https://rt.portaone.com/Customers/Display.html?id={{ task.customer_id }}" target="_blank">{{ task.customer }}</a>
         </td>
-        <td class="default">{{ task.task|lower|truncatewords:'3' }}</td>
-        <td class="default">{{ task.executor }}</td>
+        <td class="active">{{ task.task|lower|truncatewords:'3' }}</td>
+        <td class="active">{{ task.executor }}</td>
         {% if task.status|lower == 'done' %}
             <td class="success">{{ task.status }}</td>
         {% elif 'In' in task.status or 'Post' in task.status  or 'Part' in task.status %}
@@ -71,8 +94,9 @@
         {% endif %}
       </tr>
     {% endfor %}
-
 </table>
+
+
         </div>
     </div>
 </div>
@@ -88,6 +112,6 @@ $(function() {
     if (noTasks) {
         noTasks.fadeOut(4000);
     }
-});    
+});
 </script>
 {% endblock %}
