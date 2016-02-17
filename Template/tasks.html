@@ -5,20 +5,21 @@
 <div class="table-responsive">
 <table class="table table-bordered">
   <tr class="text-center">
-    <td class="info" width="200" >Ticket</td>
-    <td class="info" width="200" >Date</td>
-    <td class="info" width="200" >Customer</td>
+    <td class="info" width="200">Ticket</td>
+    <td class="info" width="200">Date</td>
+    <td class="info" width="200">Customer</td>
     <td class="info">Task</td>
     <td class="info" width="120">Executor</td>
+    <td class="info" width="120">Added by</td>
     <td class="info" width="120">Status</td>
   </tr>
     {% for task in tasks %}
         <tr class="text-center">
         <td class="active">
           <a href="https://rt.portaone.com/Ticket/Display.html?id={{ task.ticket }}" target="_blank">
- <!--             <span class="badge">
+             <span class="badge">
                   {% if task.office == 1 %}k{%elif task.office == 2 %}c{% elif task.office == 3 %}s{% else %}n{% endif %}
-              </span> -->
+              </span>
               {{ task.ticket }}
             </a>
           <a href="/tasks/get/{{ task.id }}/">
@@ -31,6 +32,7 @@
         </td>
         <td class="active">{{ task.task|lower|truncatewords:'4' }}</td>
         <td class="active">{{ task.executor }}</td>
+        <td class="active">{{ task.added_by }}</td>
             {% if task.status|lower == 'done' %}
                 <td class="success">
                     {{ task.status }}
@@ -82,7 +84,7 @@ $(function() {
     var oldLink = '<a href="/tasks/old">Archive</a>';
     var $menu = $('.nav-justified li:nth-child(4)');
     var $currentLink = $(location).attr('href').split('/')[4];
-    
+
     if ($currentLink === "old") {
         $menu.html(oldLink);
     }

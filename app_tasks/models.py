@@ -24,6 +24,7 @@ class Customer(models.Model):
 class Engineer(models.Model):
 
     OFFICES = (
+        (0, u'Unknown'),
         (1, u'Kyiv'),
         (2, u'Chernihiv'),
         (3, u'Sumy'),
@@ -38,7 +39,7 @@ class Engineer(models.Model):
     )
 
     user = models.OneToOneField(User)
-    office = models.IntegerField(choices=OFFICES)
+    office = models.IntegerField(choices=OFFICES, default=0)
     position = models.CharField(choices=POSITIONS, max_length=3, default='u')
 
 
