@@ -24,9 +24,9 @@ class Customer(models.Model):
 class Engineer(models.Model):
 
     OFFICES = (
-        (u'c', u'Chernihiv'),
-        (u'k', u'Kyiv'),
-        (u's', u'Sumy'),
+        (1, u'Kyiv'),
+        (2, u'Chernihiv'),
+        (3, u'Sumy'),
     )
 
     POSITIONS = (
@@ -38,11 +38,17 @@ class Engineer(models.Model):
     )
 
     user = models.OneToOneField(User)
-    office = models.CharField(choices=OFFICES, max_length=1, default='c')
+    office = models.IntegerField(choices=OFFICES)
     position = models.CharField(choices=POSITIONS, max_length=3, default='u')
 
 
 class Task(models.Model):
+
+    OFFICES = (
+        (1, u'Kyiv'),
+        (2, u'Chernihiv'),
+        (3, u'Sumy'),
+    )
 
     STATUSES = (
         (u'Scheduled', u'Scheduled'),
@@ -64,8 +70,9 @@ class Task(models.Model):
     task = models.CharField(max_length=200)
     executor = models.CharField(max_length=20, default="Nobody")
     status = models.CharField(max_length=20, choices=STATUSES, default='Scheduled')
-    office = models.IntegerField(default=0)
+    office = models.IntegerField(choices=OFFICES)
     ip_addr = models.GenericIPAddressField(default="0.0.0.0")
+    is_deleted = models.BooleanField(default=False)
 
 
     def __unicode__(self):

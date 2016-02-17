@@ -13,7 +13,7 @@ $(document).ready(function() {
 </script>
 {% endblock %}
 {% block content %}<br>
-<div class="panel panel-primary">
+{% if task.is_deleted == False %}<div class="panel panel-primary">{% else %}<div class="panel panel-warning">{% endif %}
   <div class="panel-heading">
       <a class="btn btn-default" href="https://rt.portaone.com/Ticket/Display.html?id={{ task.ticket }}" target="_blank">Open ticket in RT</a>
       <a class="btn btn-default" href="https://rt.portaone.com/Customers/Display.html?id={{ task.customer_id }}" target="_blank">{{ task.customer }}</a>
@@ -73,14 +73,15 @@ $(document).ready(function() {
                                {{ task.status }}
                     {% endif %}
                    </td>
+                {% if task.is_deleted == False %}
                 <td class="default">
-                        <form class="form-horizontal" id="delete" action="/task/delete/{{ task.id }}/" method="post">
-                        {% csrf_token %}
-                        <button type="submit" class="btn btn-danger">
-                            <span class="glyphicon glyphicon-trash" aria-hidden="true"></span>  Delete
-                        </button>
-                    </form>
+                        <form class="form-horizontal" id="delete" action="/task/delete/{{ task.id }}/" method="post">{% csrf_token %}
+                            <button type="submit" class="btn btn-danger">
+                                <span class="glyphicon glyphicon-trash" aria-hidden="true"></span>  Delete
+                            </button>
+                        </form>
                 </td>
+                {% endif %}
               </tr>
             </table></div>
 

@@ -41,7 +41,8 @@ def get_ip(request):
 @require_safe
 def nearest_task_json(request):
     now = timezone.now()
-    near_task = Task.objects.filter(date__gt=now).order_by('date').values()[0]
+    near_task = Task.objects.filter(
+        date__gt=now).filter(is_deleted=False).order_by('date').values()[0]
     near_task['date'] = str(near_task['date'])
     near_task['added'] = str(near_task['added'])
     response = json.dumps(near_task)
@@ -53,14 +54,13 @@ def nearest_task_json(request):
 def main_page(request):
     now = timezone.now()
     try:
-        near_task = Task.objects.filter(date__gt=now).order_by('date')[0]
+        near_task = Task.objects.filter(
+            date__gt=now).filter(is_deleted=False).order_by('date')[0]
     except IndexError:
         near_task = None
-    logs = Log.objects.all().order_by('-date')[:5]
     args = {
         'active': 'Home',
         'near_task': near_task,
-        'logs': logs,
         'year': now.year
     }
     return render(request, 'main.html', args)
@@ -69,20 +69,50 @@ def main_page(request):
 @require_safe
 @login_required
 def shift(request):
+    """
+    Day shift from 08-00 to 20-00
+    Night shift from 20-00 to 8-00
+    """
     today = datetime.date.today()
-    today_8 = datetime.datetime(today.year, today.month, today.day, 8, 0, 0)
-    tomorrow = today_8 + datetime.timedelta(days=1)
-    today = Task.objects.filter(
-        date__gte=today_8
-    ).exclude(
-        date__gte=tomorrow
-    ).order_by('-date')
-    nearest = Task.objects.filter(
-        date__gt=datetime.datetime.now())[0:3]
+    now = datetime.datetime.now()
+
+    if now.hour >= 8 and now.hour < 20:
+        # case from 08-00 to 20-00 day shift
+        day = True
+        today_8 = datetime.datetime(
+            today.year, today.month, today.day, 8, 0, 0)
+        today_20 = datetime.datetime(
+            today.year, today.month, today.day, 20, 0, 0)
+        tasks = Task.objects.filter(is_deleted=False).filter(
+            date__gte=today_8).exclude(date__gte=today_20).order_by('-date')
+
+    elif now.hour >= 20:
+        # case from 20-00 to 23-00 night shift
+        day = False
+        today_20 = datetime.datetime(
+            today.year, today.month, today.day, 20, 0, 0)
+        tomorrow = today_20 + datetime.timedelta(hours=12)
+        tasks = Task.objects.filter(is_deleted=False).filter(
+            date__gte=today_20).exclude(date__gte=tomorrow).order_by('-date')
+
+    elif now.hour >= 0 and now.hour < 8:
+        # case from 00-00 to 08-00 night shift
+        day = False
+        yesterday_20 = datetime.datetime(
+            today.year, today.month, today.day - 1, 20, 0, 0)
+        tomorrow = yesterday_20 + datetime.timedelta(hours=12)
+        tasks = Task.objects.filter(
+            is_deleted=False).filter(
+            date__gte=yesterday_20).exclude(
+            date__gte=tomorrow).order_by('-date')
+
+    nearest = Task.objects.filter(is_deleted=False).filter(date__gt=now)[0:3]
     args = {
         'active': 'Shift',
         'today': today,
-        'nearest': nearest
+        'nearest': nearest,
+        'tasks': tasks,
+        'day': day
     }
     return render(request, 'shift.html', args)
 
@@ -95,7 +125,7 @@ class TasksNew(ListView):
 
     def get_queryset(self):
         now = timezone.now()
-        qs = Task.objects.order_by('date')
+        qs = Task.objects.filter(is_deleted=False).order_by('date')
         return qs.exclude(date__lt=now)
 
 
@@ -112,14 +142,15 @@ class TasksOld(TasksNew):
 
     def get_queryset(self):
         now = timezone.now()
-        qs = Task.objects.filter(date__lt=now).order_by('-date')
+        qs = Task.objects.filter(
+            is_deleted=False).filter(date__lt=now).order_by('-date')
         return qs
 
 
 @login_required
 def month(request):
     this_month = timezone.now().month
-    tasks = Task.objects.filter(
+    tasks = Task.objects.filter(is_deleted=False).filter(
         date__month=this_month).order_by('date')
     return render(
         request, 'month.html', {'month': tasks, 'active': 'Month'}
@@ -197,11 +228,14 @@ def change_field(request):
 @login_required
 def delete_task(request, task_id):
     task = Task.objects.get(id=task_id)
-    to_log = "Task: '{}' was deleted by {}".format(task.task, request.user)
+    task.is_deleted = True
+    task.save(update_fields=['is_deleted'])
+    to_log = "Task(id={}): '{}' was deleted by {}".format(
+        task.id, task.task, request.user
+    )
     new_log = Log.objects.create(
         log_task=task, message=to_log, date=timezone.now()
     )
-    task.delete()
     return redirect('add')
 
 

@@ -1,11 +1,19 @@
 {% extends "main.html" %}
 {% block title %}Shift{% endblock %}
 
+{% block additional_js %}
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css">
+{% endblock %}
+
 {% block content %}
 
 {% if today|length > 0 %}
 <div class="panel panel-warning">
-    <div class="panel-heading"><h5>Today</h5></div>
+    <div class="panel-heading">
+        {% if day %}<span class="fa fa-sun-o fa-2x"></span>
+        {% else %}<span class="fa fa-moon-o fa-2x"></span>
+        {% endif %}
+        <h5>Shift</h5></div>
     <div class="panel-body">
         <div class="table-responsive">
 
@@ -18,7 +26,7 @@
     <td class="info" width="120">Executor</td>
     <td class="info" width="120">Status</td>
   </tr>
-    {% for task in today %}
+    {% for task in tasks %}
       <tr class="text-center">
         <td class="active">
           <a href="https://rt.portaone.com/Ticket/Display.html?id={{ task.ticket }}" target="_blank">{{ task.ticket }}</a>
