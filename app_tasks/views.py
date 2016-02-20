@@ -93,7 +93,7 @@ def shift(request):
             today.year, today.month, today.day, 20, 0, 0)
         tomorrow = today_20 + datetime.timedelta(hours=12)
         tasks = Task.objects.filter(is_deleted=False).filter(
-            date__gte=today_20).exclude(date__gte=tomorrow).order_by('-date')
+            date__gte=today_20).exclude(date__gte=tomorrow).order_by('date')
 
     elif now.hour >= 0 and now.hour < 8:
         # case from 00-00 to 08-00 night shift
@@ -104,12 +104,12 @@ def shift(request):
         tasks = Task.objects.filter(
             is_deleted=False).filter(
             date__gte=yesterday_20).exclude(
-            date__gte=tomorrow).order_by('-date')
+            date__gte=tomorrow).order_by('date')
 
-    nearest = Task.objects.filter(is_deleted=False).filter(date__gt=now)[0:3]
+    nearest = Task.objects.filter(
+    is_deleted=False).filter(date__gt=now).order_by('date')[0:3]
     args = {
         'active': 'Shift',
-        'today': today,
         'nearest': nearest,
         'tasks': tasks,
         'day': day

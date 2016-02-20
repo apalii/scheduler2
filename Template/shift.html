@@ -7,13 +7,12 @@
 
 {% block content %}
 
-{% if today|length > 0 %}
+{% if tasks %}
 <div class="panel panel-warning">
-    <div class="panel-heading">
+    <div class="panel-heading"><h5>
         {% if day %}<span class="fa fa-sun-o fa-2x"></span>
         {% else %}<span class="fa fa-moon-o fa-2x"></span>
-        {% endif %}
-        <h5>Shift</h5></div>
+        {% endif %} Shift</h5></div>
     <div class="panel-body">
         <div class="table-responsive">
 
@@ -52,11 +51,10 @@
     {% endfor %}
 </table>
 
-
         </div>
     </div>
 </div>
-{% elif nearest|length > 0 %}
+{% elif tasks|length == 0 and nearest %}
 
 <div class="alert alert-success">
     <a href="#" class="close" data-dismiss="alert">&times;</a>
@@ -64,10 +62,10 @@
 </div>
 
 <div class="panel panel-success">
-    <div class="panel-heading"><h5>Nearest</h5></div>
+    <div class="panel-heading">
+        <h5><span class="fa fa-calendar-check-o fa-2x"></span>  Nearest</h5></div>
     <div class="panel-body">
         <div class="table-responsive">
-
 
 <table class="table table-bordered">
   <tr class="text-center">
@@ -103,7 +101,6 @@
       </tr>
     {% endfor %}
 </table>
-
 
         </div>
     </div>

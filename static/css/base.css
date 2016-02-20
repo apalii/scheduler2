@@ -35,15 +35,11 @@ body {
     margin-top: 30px;
 }
 
-.text-muted small {
-    float:right;
-    margin-right:35px;
+.masthead .current-user {
+    line-height: 24px;
+    font-size: 16px;
 }
 
-.text-muted {
-    margin-left:25px;
-}
-
-#user {
-    float:right;
+.masthead .heading {
+    padding: 0 15px;
 }

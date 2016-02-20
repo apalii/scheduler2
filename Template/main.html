@@ -21,9 +21,12 @@
 <div class="container-fluid">
     {% block menubar %}
       <div class="masthead">
-        <h3 class="text-muted">Scheduler 2.0
-            <small>{{ user }}</small><span id="user" class="glyphicon glyphicon-user"></span>
-        </h3>
+        <div class="heading">
+            <div class="current-user text-muted pull-right">
+                <span class="glyphicon glyphicon-user"></span> {{ user }}
+            </div>
+            <h3 class="text-muted">Scheduler 2.0</h3>
+        </div>
         <nav>
           <ul class="nav nav-justified">
             <li {% if active == "Home" %} class="active" {% endif %}><a href="/">Home</a></li>
