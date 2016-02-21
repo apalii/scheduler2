@@ -61,7 +61,6 @@ def main_page(request):
     args = {
         'active': 'Home',
         'near_task': near_task,
-        'year': now.year
     }
     return render(request, 'main.html', args)
 

@@ -9,11 +9,6 @@ class SetRemoteAddr(object):
             pass
         else:
             real_ip = real_ip.split(",")[0]
-            request.META['REMOTE_ADDR'] = real_ip
-            #request.META['REMOTE_USER'] = "TEST_USER" + str(random())[6:]
-            request.META['REMOTE_USER'] = "TEST_USER"
-            """if request.META['PATH_INFO'] == '/':
-                ins, created = Ips.objects.get_or_create(ip=real_ip)
-                if not created:
-                    ins.counter += 1
-                    ins.save()"""
+        #request.META['REMOTE_ADDR'] = real_ip
+        #request.META['REMOTE_USER'] = "TEST_USER" + str(random())[6:]
+        request.META['REMOTE_USER'] = "TEST_USER"

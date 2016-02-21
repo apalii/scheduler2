@@ -152,30 +152,3 @@ INSTALLED_APPS = (
 # the site admins on every HTTP 500 error when DEBUG=False.
 # See http://docs.djangoproject.com/en/dev/topics/logging for
 # more details on how to customize your logging configuration.
-LOGGING = {
-    'version': 1,
-    'disable_existing_loggers': True,
-    'formatters': {
-        'standart': {
-            'format': '%(asctime)s [%(levelname)s] %(name)s : %(message)s'
-        },
-    },
-    'handlers': {
-        'default': {
-            'level': 'DEBUG',
-            'class': 'logging.handlers.RotatingFileHandler',
-            'filename': 'logs/tasks.log',
-            'maxBytes': 1024*1024*5,
-            'backupCount': 5,
-            'formatter': 'standart',
-        },
-    },
-    'loggers': {
-
-        '': {
-            'handlers': ['default'],
-            'level': 'DEBUG',
-            'propagate': True
-        },
-    }
-}
