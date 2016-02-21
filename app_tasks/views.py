@@ -106,7 +106,7 @@ def shift(request):
             date__gte=tomorrow).order_by('date')
 
     nearest = Task.objects.filter(
-    is_deleted=False).filter(date__gt=now).order_by('date')[0:3]
+        is_deleted=False).filter(date__gt=now).order_by('date')[0:3]
     args = {
         'active': 'Shift',
         'nearest': nearest,

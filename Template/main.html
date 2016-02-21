@@ -10,6 +10,7 @@
   <link href={% static "css/justified-nav.css" %} rel="stylesheet" />
   <link href={% static "css/base.css" %} rel="stylesheet" />
   <link href='//fonts.googleapis.com/css?family=PT+Sans:400,700' rel='stylesheet' type='text/css'>
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css">
   <script src="http://code.jquery.com/jquery-2.0.3.min.js"></script>
   <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js" integrity="sha384-0mSbJDEHialfmuBBQP6A4Qrprq5OVfW37PRR3j5ELqxss1yVqOtnepnHVP9aJ7xS" crossorigin="anonymous"></script>
 
@@ -29,13 +30,13 @@
         </div>
         <nav>
           <ul class="nav nav-justified">
-            <li {% if active == "Home" %} class="active" {% endif %}><a href="/">Home</a></li>
-            <li {% if active == "Shift" %} class="active" {% endif %}><a href="/tasks/shift">Shift</a></li>
-            <li {% if active == "Month" %} class="active" {% endif %}><a href="/tasks/month">This month</a></li>
-            <li {% if active == "Tasks" %} class="active" {% endif %}><a href="/tasks/new">New tasks</a></li>
-            <li {% if active == "Search" %} class="active" {% endif %}><a href="/tasks/search">Search</a></li>
-            <li {% if active == "Add" %} class="active" {% endif %}><a href="/tasks/addtask">Add task</a></li>
-            <li {% if active == "Zones" %} class="active" {% endif %}><a href="/tz/main">Timezones</a></li>
+            <li {% if active == "Home" %} class="active" {% endif %}><a href="/"><span class="fa fa-home fa-2x"></span> Home</a></li>
+            <li {% if active == "Shift" %} class="active" {% endif %}><a href="/tasks/shift"><span class="fa fa-users fa-2x"></span> Shift</a></li>
+            <li {% if active == "Month" %} class="active" {% endif %}><a href="/tasks/month"><span class="fa fa-calendar-check-o fa-2x"></span> This month</a></li>
+            <li {% if active == "Tasks" %} class="active" {% endif %}><a href="/tasks/new"><span class="fa fa-calendar fa-2x"></span> New tasks</a></li>
+            <li {% if active == "Search" %} class="active" {% endif %}><a href="/tasks/search"><span class="fa fa-search fa-2x"></span> Search</a></li>
+            <li {% if active == "Add" %} class="active" {% endif %}><a href="/tasks/addtask"><span class="fa fa-plus fa-2x"></span> Add task</a></li>
+            <li {% if active == "Zones" %} class="active" {% endif %}><a href="/tz/main"><span class="fa fa-clock-o fa-2x"></span> Timezones</a></li>
           </ul>
         </nav>
       </div>
@@ -61,7 +62,7 @@
 
 <br><br>
     <footer class="footer">
-    <p>&copy; PortaOne 2016</p>
+    <p><span class="fa fa-copyright"></span> PortaOne 2016</p>
         <a href="mailto:dezz.ua@gmail.com">Contact author</a></br>
         <a href="https://wiki.portaone.com/display/~apalii/Scheduler+2.0" target=_blank>Wiki</a></br>
         <a href="/docs" target=_blank>Docs</a></br>
