@@ -6,6 +6,7 @@ import requests
 from django.http import HttpResponse, Http404, JsonResponse
 from django.shortcuts import render_to_response, render
 from app_tasks.models import Task, Comment, Customer, Log
+from django.contrib.auth.models import User
 from forms import CommentForm, StatusForm
 from django.core.context_processors import csrf
 from django.shortcuts import redirect, get_object_or_404
@@ -74,7 +75,10 @@ def shift(request):
     """
     today = datetime.date.today()
     now = datetime.datetime.now()
-
+    user = User.objects.get(id=request.user.id)
+    print user
+    office = user.engineer.office
+    print office
     if now.hour >= 8 and now.hour < 20:
         # case from 08-00 to 20-00 day shift
         day = True
@@ -107,10 +111,15 @@ def shift(request):
 
     nearest = Task.objects.filter(
         is_deleted=False).filter(date__gt=now).order_by('date')[0:3]
+    """
+    If an office is undefined(equals 0) - show all the tasks
+    Else show tasks only for particular office
+    """
+    tasks_per_office = tasks.filter(office=office) if office else tasks
     args = {
         'active': 'Shift',
         'nearest': nearest,
-        'tasks': tasks,
+        'tasks': tasks_per_office,
         'day': day
     }
     return render(request, 'shift.html', args)

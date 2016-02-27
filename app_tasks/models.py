@@ -1,9 +1,11 @@
 from django.db import models
 from django.contrib.auth.models import User
+from django.db.models.signals import post_save
+from django.dispatch import receiver
 
 '''
 Migrations :
-makemigrations Application # create migration
+makemigrations app_name # create migration
 migrate                    # apply migration
 sqlmigrate                 # displays the SQL statements for a migration.
 '''
@@ -41,6 +43,18 @@ class Engineer(models.Model):
     user = models.OneToOneField(User)
     office = models.IntegerField(choices=OFFICES, default=0)
     position = models.CharField(choices=POSITIONS, max_length=3, default='u')
+
+    class Meta():
+        db_table = "engineer"
+
+    def __unicode__(self):
+        return self.user.username
+
+
+@receiver(post_save, sender=User)
+def create_profile(sender, instance, created, **kwargs):
+    if created:
+        profile, new = Engineer.objects.get_or_create(user=instance)
 
 
 class Task(models.Model):

@@ -27,7 +27,12 @@
     {% for task in tasks %}
       <tr class="text-center">
         <td class="active">
-          <a href="https://rt.portaone.com/Ticket/Display.html?id={{ task.ticket }}" target="_blank">{{ task.ticket }}</a>
+          <a href="https://rt.portaone.com/Ticket/Display.html?id={{ task.ticket }}" target="_blank">
+             <span class="badge">
+                  {% if task.office == 1 %}k{%elif task.office == 2 %}c{% elif task.office == 3 %}s{% else %}n{% endif %}
+              </span>
+              {{ task.ticket }}
+          </a>
           <a href="/tasks/get/{{ task.id }}/">detail</a>
             <!--<span class="badge">14</span>-->
         </td>
@@ -78,7 +83,12 @@
     {% for task in nearest %}
       <tr class="text-center">
         <td class="active">
-          <a href="https://rt.portaone.com/Ticket/Display.html?id={{ task.ticket }}" target="_blank">{{ task.ticket }}</a>
+          <a href="https://rt.portaone.com/Ticket/Display.html?id={{ task.ticket }}" target="_blank">
+             <span class="badge">
+                  {% if task.office == 1 %}k{%elif task.office == 2 %}c{% elif task.office == 3 %}s{% else %}n{% endif %}
+              </span>
+              {{ task.ticket }}
+          </a>
           <a href="/tasks/get/{{ task.id }}/">detail</a>
             <!--<span class="badge">14</span>-->
         </td>
