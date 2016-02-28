@@ -7,8 +7,8 @@ BASE_DIR = os.path.dirname(os.path.dirname(__file__))
 DEBUG = True if PRODUCTION == False else False
 TEMPLATE_DEBUG = DEBUG
 
-if PRODUCTION:
-    ALLOWED_HOSTS = ['task.portaone.com']
+# ALLOWED_HOSTS is not applied while debug mode is on or when running tests.
+ALLOWED_HOSTS = ['task.portaone.com']
 
 # Tastypie settings
 API_LIMIT_PER_PAGE = 15

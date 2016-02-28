@@ -13,8 +13,11 @@ class TaskInline(admin.StackedInline):
     fields = ['comment']
 
 class TaskAdmin(admin.ModelAdmin):
-    #fields = ['task_ticket', 'task_date', 'task_status']
+    list_display = ('task', 'date', 'added_by', 'executor',
+                    'customer', )
+    list_filter = ('office', 'date', 'executor', 'added_by', 'customer')
     inlines = [TaskInline]
+    search_fields = ('task', 'executor')
 
 
 # Define an inline admin descriptor for Engineer model

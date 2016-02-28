@@ -46,7 +46,6 @@ def nearest_task_json(request):
         date__gt=now).filter(is_deleted=False).order_by('date').values()[0]
     near_task['date'] = str(near_task['date'])
     near_task['added'] = str(near_task['added'])
-    response = json.dumps(near_task)
     return JsonResponse(near_task)
 
 
@@ -56,7 +55,7 @@ def main_page(request):
     now = timezone.now()
     try:
         near_task = Task.objects.filter(
-            date__gt=now).filter(is_deleted=False).order_by('date')[0]
+            date__gt=now, is_deleted=False).order_by('date')[0]
     except IndexError:
         near_task = None
     args = {
@@ -76,9 +75,7 @@ def shift(request):
     today = datetime.date.today()
     now = datetime.datetime.now()
     user = User.objects.get(id=request.user.id)
-    print user
     office = user.engineer.office
-    print office
     if now.hour >= 8 and now.hour < 20:
         # case from 08-00 to 20-00 day shift
         day = True
@@ -86,8 +83,9 @@ def shift(request):
             today.year, today.month, today.day, 8, 0, 0)
         today_20 = datetime.datetime(
             today.year, today.month, today.day, 20, 0, 0)
-        tasks = Task.objects.filter(is_deleted=False).filter(
-            date__gte=today_8).exclude(date__gte=today_20).order_by('-date')
+        tasks = Task.objects.filter(
+            is_deleted=False, date__gte=today_8).exclude(
+            date__gte=today_20).order_by('-date')
 
     elif now.hour >= 20:
         # case from 20-00 to 23-00 night shift
@@ -95,8 +93,9 @@ def shift(request):
         today_20 = datetime.datetime(
             today.year, today.month, today.day, 20, 0, 0)
         tomorrow = today_20 + datetime.timedelta(hours=12)
-        tasks = Task.objects.filter(is_deleted=False).filter(
-            date__gte=today_20).exclude(date__gte=tomorrow).order_by('date')
+        tasks = Task.objects.filter(
+            is_deleted=False, date__gte=today_20).exclude(
+            date__gte=tomorrow).order_by('date')
 
     elif now.hour >= 0 and now.hour < 8:
         # case from 00-00 to 08-00 night shift
@@ -105,12 +104,11 @@ def shift(request):
             today.year, today.month, today.day - 1, 20, 0, 0)
         tomorrow = yesterday_20 + datetime.timedelta(hours=12)
         tasks = Task.objects.filter(
-            is_deleted=False).filter(
-            date__gte=yesterday_20).exclude(
+            is_deleted=False, date__gte=yesterday_20).exclude(
             date__gte=tomorrow).order_by('date')
 
     nearest = Task.objects.filter(
-        is_deleted=False).filter(date__gt=now).order_by('date')[0:3]
+        is_deleted=False, date__gt=now).order_by('date')[0:3]
     """
     If an office is undefined(equals 0) - show all the tasks
     Else show tasks only for particular office
@@ -150,16 +148,15 @@ class TasksOld(TasksNew):
 
     def get_queryset(self):
         now = timezone.now()
-        qs = Task.objects.filter(
-            is_deleted=False).filter(date__lt=now).order_by('-date')
-        return qs
+        qs = Task.objects.filter(date__lt=now).order_by('-date')
+        return qs.filter(is_deleted=False)
 
 
 @login_required
 def month(request):
     this_month = timezone.now().month
-    tasks = Task.objects.filter(is_deleted=False).filter(
-        date__month=this_month).order_by('date')
+    tasks = Task.objects.filter(
+        is_deleted=False, date__month=this_month).order_by('date')
     return render(
         request, 'month.html', {'month': tasks, 'active': 'Month'}
     )
@@ -305,13 +302,8 @@ def add_task(request):
 
             # lookup for nearest updates
             update_near = Task.objects.exclude(
-                date__lt=time_before
-            ).exclude(
-                date__gt=time_after
-            ).filter(
-                task__contains='update'
-            ).filter(
-                task__contains='from')
+                date__lt=time_before, date__gt=time_after).filter(
+                task__contains='update').filter(task__contains='from')
 
             # update during shifts
             shift = 'day' if tz_date.hour > 8 and tz_date.hour < 20 else 'night'
@@ -321,19 +313,11 @@ def add_task(request):
 
             # lookup for day/night shift
             update_shift = Task.objects.exclude(
-                date__lt=day_start
-            ).exclude(
-                date__gt=day_end
-            ).filter(
+                date__lt=day_start, date__gt=day_end).filter(
                 task__contains='update') if shift == 'day' else \
             Task.objects.exclude(
-                date__lt=tomorrow
-            ).exclude(
-                date__gt=day_end
-            ).filter(
-                task__contains='update'
-            ).filter(
-                task__contains='from')
+                date__lt=tomorrow,date__gt=day_end).filter(
+                task__contains='update').filter(task__contains='from')
 
         if update_near or update_shift:
             msg = 'Another update exists. Press backspace and try another date'
