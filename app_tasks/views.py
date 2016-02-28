@@ -42,8 +42,7 @@ def get_ip(request):
 @require_safe
 def nearest_task_json(request):
     now = timezone.now()
-    near_task = Task.objects.filter(
-        date__gt=now).filter(is_deleted=False).order_by('date').values()[0]
+    near_task = Task.active.filter(date__gt=now).order_by('date').values()[0]
     near_task['date'] = str(near_task['date'])
     near_task['added'] = str(near_task['added'])
     return JsonResponse(near_task)
@@ -54,8 +53,7 @@ def nearest_task_json(request):
 def main_page(request):
     now = timezone.now()
     try:
-        near_task = Task.objects.filter(
-            date__gt=now, is_deleted=False).order_by('date')[0]
+        near_task = Task.active.filter(date__gt=now).order_by('date')[0]
     except IndexError:
         near_task = None
     args = {
@@ -83,8 +81,7 @@ def shift(request):
             today.year, today.month, today.day, 8, 0, 0)
         today_20 = datetime.datetime(
             today.year, today.month, today.day, 20, 0, 0)
-        tasks = Task.objects.filter(
-            is_deleted=False, date__gte=today_8).exclude(
+        tasks = Task.active.filter(date__gte=today_8).exclude(
             date__gte=today_20).order_by('-date')
 
     elif now.hour >= 20:
@@ -93,8 +90,7 @@ def shift(request):
         today_20 = datetime.datetime(
             today.year, today.month, today.day, 20, 0, 0)
         tomorrow = today_20 + datetime.timedelta(hours=12)
-        tasks = Task.objects.filter(
-            is_deleted=False, date__gte=today_20).exclude(
+        tasks = Task.active.filter(date__gte=today_20).exclude(
             date__gte=tomorrow).order_by('date')
 
     elif now.hour >= 0 and now.hour < 8:
@@ -103,12 +99,10 @@ def shift(request):
         yesterday_20 = datetime.datetime(
             today.year, today.month, today.day - 1, 20, 0, 0)
         tomorrow = yesterday_20 + datetime.timedelta(hours=12)
-        tasks = Task.objects.filter(
-            is_deleted=False, date__gte=yesterday_20).exclude(
+        tasks = Task.active.filter(date__gte=yesterday_20).exclude(
             date__gte=tomorrow).order_by('date')
 
-    nearest = Task.objects.filter(
-        is_deleted=False, date__gt=now).order_by('date')[0:3]
+    nearest = Task.active.filter(date__gt=now).order_by('date')[0:3]
     """
     If an office is undefined(equals 0) - show all the tasks
     Else show tasks only for particular office
@@ -131,8 +125,8 @@ class TasksNew(ListView):
 
     def get_queryset(self):
         now = timezone.now()
-        qs = Task.objects.filter(is_deleted=False).order_by('date')
-        return qs.exclude(date__lt=now)
+        qs = Task.active.exclude(date__lt=now).order_by('date')
+        return qs
 
 
     def get_context_data(self, **kwargs):
@@ -148,15 +142,14 @@ class TasksOld(TasksNew):
 
     def get_queryset(self):
         now = timezone.now()
-        qs = Task.objects.filter(date__lt=now).order_by('-date')
-        return qs.filter(is_deleted=False)
+        qs = Task.active.filter(date__lt=now).order_by('-date')
+        return qs
 
 
 @login_required
 def month(request):
     this_month = timezone.now().month
-    tasks = Task.objects.filter(
-        is_deleted=False, date__month=this_month).order_by('date')
+    tasks = Task.active.filter(date__month=this_month).order_by('date')
     return render(
         request, 'month.html', {'month': tasks, 'active': 'Month'}
     )

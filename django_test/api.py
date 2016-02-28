@@ -1,13 +1,13 @@
 from tastypie.resources import ModelResource
 from app_tasks.models import Task
-from datetime import datetime as dt
-import datetime 
+from datetime import datetime
+import datetime as dt
 import copy
 
-# version 1 
+# version 1
 class TaskAll(ModelResource):
     class Meta:
-        queryset = Task.objects.all().order_by('-date')
+        queryset = Task.active.all().order_by('-date')
         resource_name = 'all'
         filtering = {
             'task': 'contains'
@@ -17,20 +17,18 @@ class TaskAll(ModelResource):
         allowed_methods = ['get']
 
     def alter_list_data_to_serialize(self, request, data):
-        data['meta']['current_time_utc'] = dt.strftime(dt.utcnow(), '%Y-%m-%d %H:%M') 
+        data['meta']['current_time_utc'] = datetime.strftime(
+            datetime.utcnow(), '%Y-%m-%d %H:%M')
         return data
 
-    
+
 class Shift(ModelResource):
     class Meta:
-        today = datetime.date.today()
-        today_8 = datetime.datetime(today.year, today.month, today.day, 8, 0, 0)
-        tomorrow = today_8 + datetime.timedelta(days=1)
-        queryset = Task.objects.filter(
-            date__gte=today_8
-        ).exclude(
-            date__gte=tomorrow
-        ).order_by('-date')
+        today = dt.date.today()
+        today_8 = dt.datetime(today.year, today.month, today.day, 8, 0, 0)
+        tomorrow = today_8 + dt.timedelta(days=1)
+        queryset = Task.active.filter(
+            date__gte=today_8).exclude(date__gte=tomorrow).order_by('-date')
         resource_name = 'shift'
         filtering = {
             'office': 'exact'
@@ -39,7 +37,7 @@ class Shift(ModelResource):
         excludes = ['added', 'ip_addr', 'id']
         allowed_methods = ['get']
 
-        
+
     def alter_list_data_to_serialize(self, request, data_dict):
         if isinstance(data_dict, dict):
             if 'meta' in data_dict:

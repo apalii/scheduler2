@@ -57,7 +57,16 @@ def create_profile(sender, instance, created, **kwargs):
         profile, new = Engineer.objects.get_or_create(user=instance)
 
 
+class ActiveManager(models.Manager):
+    def get_queryset(self):
+        return super(ActiveManager, self).get_queryset().filter(
+            is_deleted=False)
+
+
 class Task(models.Model):
+
+    objects = models.Manager()
+    active = ActiveManager()
 
     OFFICES = (
         (1, u'Kyiv'),

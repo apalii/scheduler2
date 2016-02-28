@@ -8,13 +8,6 @@ admin.autodiscover()
 v1_api = Api(api_name='v1')
 v1_api.register(TaskAll())
 v1_api.register(Shift())
-'''
-urlpatterns = patterns('',
-    # The normal jazz here...
-    (r'^blog/', include('myapp.urls')),
-    (r'^api/', include(v1_api.urls)),
-)
-'''
 
 urlpatterns = patterns('',
                        url(r'^$', 'app_tasks.views.main_page'),
