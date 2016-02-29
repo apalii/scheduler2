@@ -12,7 +12,7 @@
                 <ul class="nav nav-tabs">
                     <li class="active"><a href="#tab-1" data-toggle="tab">Changes</a></li>
                     <li><a href="#tab-2" data-toggle="tab">API</a></li>
-                    <li><a href="#tab-3" data-toggle="tab">tab3</a></li>
+                    <li><a href="#tab-3" data-toggle="tab">History</a></li>
                 </ul>
                 <div class="tab-content">
                     <div class="tab-pane fade in active" id="tab-1">
@@ -55,7 +55,10 @@
                         <a href="{{ request.get_host }}/api/v1/shift/?format=json&office=2">/shift/?format=json&office=2</a><br>
                     </div>
                     <div class="tab-pane fade" id="tab-3">
-                        <p>text3</p>
+                        {% for commit in history %}
+                            <a href="https://github.com/apalii/scheduler2/commit/{{ commit.sha }}">
+                            {{ commit.commit.message }}</a> on {{ commit.commit.author.date }} by {{ commit.commit.author.name }}<br>
+                        {% endfor %}
                     </div>
                 </div>
             </div>

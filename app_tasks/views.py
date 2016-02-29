@@ -357,7 +357,9 @@ def search_tasks(request):
 @require_safe
 @login_required
 def docs(request):
+    history_url = 'https://api.github.com/repos/apalii/scheduler2/commits'
     args = {}
     args['version'] = '3.0 beta'
+    args['history'] = requests.get(history_url).json()
     return render(request, 'docs.html', args)
 # ----------------------------------------------------------------
