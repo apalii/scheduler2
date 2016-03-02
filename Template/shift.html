@@ -1,4 +1,5 @@
 {% extends "main.html" %}
+{% load app_filters %}
 {% block title %}Shift{% endblock %}
 
 {% block additional_js %}
@@ -31,7 +32,7 @@
              <span class="badge">
                   {% if task.office == 1 %}k{%elif task.office == 2 %}c{% elif task.office == 3 %}s{% else %}n{% endif %}
               </span>
-              {{ task.ticket }}
+              {{ task.ticket|ticket_only }}
           </a>
           <a href="/tasks/get/{{ task.id }}/">detail</a>
             <!--<span class="badge">14</span>-->
@@ -87,7 +88,7 @@
              <span class="badge">
                   {% if task.office == 1 %}k{%elif task.office == 2 %}c{% elif task.office == 3 %}s{% else %}n{% endif %}
               </span>
-              {{ task.ticket }}
+              {{ task.ticket|ticket_only }}
           </a>
           <a href="/tasks/get/{{ task.id }}/">detail</a>
             <!--<span class="badge">14</span>-->

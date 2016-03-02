@@ -1,4 +1,5 @@
 {% extends "main.html" %}
+{% load app_filters %}
 {% block title %}Tasks this month{% endblock %}
 
 {% block content %}
@@ -14,7 +15,7 @@
     {% for task in month %}
       <tr class="text-center">
         <td class="active">
-          <a href="https://rt.portaone.com/Ticket/Display.html?id={{ task.ticket }}" target="_blank">{{ task.ticket }}</a>
+          <a href="https://rt.portaone.com/Ticket/Display.html?id={{ task.ticket }}" target="_blank">{{ task.ticket|ticket_only }}</a>
           <a href="/tasks/get/{{ task.id }}/">detail</a>
             <!--<span class="badge">14</span>-->
         </td>
