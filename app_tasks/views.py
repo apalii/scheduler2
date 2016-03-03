@@ -14,6 +14,7 @@ from dateutil.relativedelta import relativedelta
 from django.utils import timezone
 from django.views.generic import ListView
 from django.contrib.auth.decorators import login_required
+from django.views.decorators.cache import cache_page
 from django.views.decorators.http import (
     require_http_methods, require_safe, require_POST
 )
@@ -356,6 +357,7 @@ def search_tasks(request):
 
 @require_safe
 @login_required
+@cache_page(3600 * 24)
 def docs(request):
     history_url = 'https://api.github.com/repos/apalii/scheduler2/commits'
     args = {}

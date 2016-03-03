@@ -16,3 +16,4 @@ simplegeneric==0.8.1
 six==1.10.0
 traitlets==4.1.0
 wsgiref==0.1.2
+python-memcached==1.57
