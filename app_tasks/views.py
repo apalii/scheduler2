@@ -18,7 +18,7 @@ from django.views.decorators.cache import cache_page
 from django.views.decorators.http import (
     require_http_methods, require_safe, require_POST
 )
-
+requests.packages.urllib3.disable_warnings()
 
 def logging(task_id, message):
     task = Task.objects.get(pk=task_id)
@@ -132,8 +132,10 @@ class TasksNew(ListView):
 
     def get_context_data(self, **kwargs):
         context = super(TasksNew, self).get_context_data(**kwargs)
+        new = self.request.session.pop('new', None)
         context.update({'active': 'Tasks',
                        'class': self.__class__.__name__,
+                        'new': new,
                        })
         return context
 
@@ -334,7 +336,8 @@ def add_task(request):
                                           ip_addr=get_ip(request),
                                           added_by = request.user,
                                           )
-            return redirect('/tasks/get/%s/' % newtask.id)
+            request.session['new'] = newtask.id
+            return redirect('new')
 
 
 @require_http_methods(["GET", "POST"])
@@ -364,4 +367,3 @@ def docs(request):
     args['version'] = '3.0 beta'
     args['history'] = requests.get(history_url).json()
     return render(request, 'docs.html', args)
-# ----------------------------------------------------------------

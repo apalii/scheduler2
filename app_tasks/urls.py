@@ -4,7 +4,7 @@ from django.conf.urls import patterns, url, include
 from app_tasks.views import TasksNew, TasksOld
 
 urlpatterns = patterns('',
-                       url(r'^new/$', TasksNew.as_view()),
+                       url(r'^new/$', TasksNew.as_view(), name='new'),
                        url(r'^shift/$', 'app_tasks.views.shift'),
                        url(r'^month/$', 'app_tasks.views.month'),
                        url(r'^addtask/$', 'app_tasks.views.add_task', name='add'),

@@ -29,7 +29,7 @@ body {
 }
 
 .neartask-area {
-    text-align:center;
+    text-align: center;
     font-size: 13px;
     margin-left: 40px;
     margin-top: 30px;
@@ -42,4 +42,19 @@ body {
 
 .masthead .heading {
     padding: 0 15px;
+}
+
+@-webkit-keyframes yellow-fade {
+   0% {background: yellow;}
+   100% {background: none;}
+}
+
+@keyframes yellow-fade {
+   0% {background: yellow;}
+   100% {background: none;}
+}
+
+.new {
+   -webkit-animation: yellow-fade 2s ease-in 1;
+   animation: yellow-fade 2s ease-in 1;
 }

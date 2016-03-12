@@ -16,7 +16,7 @@
   </tr>
     {% for task in tasks %}
         <tr class="text-center">
-        <td class="active">
+        <td class="active {% if new and new == task.id %} new {% endif %}">
           <a href="https://rt.portaone.com/Ticket/Display.html?id={{ task.ticket }}" target="_blank">
              <span class="badge">
                   {% if task.office == 1 %}k{%elif task.office == 2 %}c{% elif task.office == 3 %}s{% else %}n{% endif %}
