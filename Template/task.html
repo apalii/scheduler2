@@ -1,14 +1,55 @@
 {% extends "main.html" %}
 {% load static %}
 {% block title %}{{ task.title }}{% endblock %}
-
-{% block additional_js %}
+{% block additional_css %}
 <link href="//cdnjs.cloudflare.com/ajax/libs/x-editable/1.5.1/bootstrap3-editable/css/bootstrap-editable.css" rel="stylesheet"/>
+{% endblock %}
+{% block additional_js %}
 <script src="//cdnjs.cloudflare.com/ajax/libs/x-editable/1.5.1/bootstrap3-editable/js/bootstrap-editable.min.js"></script>
 <script>
 $(document).ready(function() {
     //toggle `popup` / `inline` mode
     $.fn.editable.defaults.mode = 'popup';
+});
+$(function(){
+    $('.editable-field').editable({
+        url: '/post',
+        title: 'Correct values',
+        success: function(response, newValue) {
+            if(response.status == 'error') return response.msg; //msg will be shown in editable form
+        },
+        params: function(params) {  //params already contain `name`, `value` and `pk`
+            var data = {};
+            data['id'] = params.pk;
+            data['field'] = params.name;
+            data[params.name] = params.value;
+            data['csrfmiddlewaretoken'] = '{{ csrf_token }}';
+            return data;
+        }
+    });
+});
+$(function(){
+    $('#status').editable({
+        value: '{{ task.status }}',
+        success: function(response, newValue) {
+            if(response.status == 'error') return response.msg;
+        },
+        params: function(params) {
+            return {
+                status: params.value,
+                csrfmiddlewaretoken: '{{ csrf_token }}'
+            };
+        },
+        source: [
+            {value: 'Scheduled', text: 'Scheduled'},
+            {value: 'Done', text: 'Done'},
+            {value: 'In progress', text: 'In progress'},
+            {value: 'Postponed', text: 'Postponed'},
+            {value: 'Partially', text: 'Partially'},
+            {value: 'Cancelled', text: 'Cancelled'},
+            {value: 'Failed', text: 'Failed'},
+        ]
+    });
 });
 </script>
 {% endblock %}
@@ -23,21 +64,7 @@ $(document).ready(function() {
       <table class="table" >
               <tr class="text-center">
                 <td class="default">
-                    <form class="form-horizontal" id="1" action="/task/changestatus/{{ task.id }}/" method="post">
-                        {% csrf_token %}
-                        <div class="col-sm-3">
-                        <select class="form-control" onchange="$('#1').submit()" id="change_status" name="status">
-                            <option>Change status</option>
-                            <option value="Scheduled">Scheduled</option>
-                            <option value="Done">Done</option>
-                            <option value="In progress">In progress</option>
-                            <option value="Postponed">Postponed</option>
-                            <option value="Partially">Partially</option>
-                            <option value="Cancelled">Cancelled</option>
-                            <option value="Failed">Failed</option>
-                        </select>
-                        </div>
-                    </form>
+                    <a href="#" id="status" data-type="select" data-pk="{{ task.id }}" data-url="/task/changestatus/{{ task.id }}/" data-title="Select status"></a>
                 </td>
 
                 <td class="default">
@@ -56,23 +83,6 @@ $(document).ready(function() {
                     <span class="glyphicon glyphicon-user" aria-hidden="true"></span>
                     <a href="#" class="editable-field" id="executor" data-type="text" data-pk="{{ task.id }}" data-url="{% url 'changefield' %}" data-title="Enter executor name">{{ task.executor }}</a>
                 </td>
-
-                  <td class="default">
-                    {% if task.status|lower == 'done' %}
-
-                            <span class="glyphicon glyphicon-ok" aria-hidden="true"></span>
-                            {{ task.status }}
-                        {% elif 'In' in task.status or 'Post' in task.status  or 'Part' in task.status %}
-                               <span class="glyphicon glyphicon-wrench" aria-hidden="true"></span>
-                               {{ task.status }}
-                        {% elif 'Sch' in task.status %}
-                               <span class="glyphicon glyphicon-check" aria-hidden="true"></span>
-                               {{ task.status }}
-                        {% else %}
-                                <span class="glyphicon glyphicon-ban-circle" aria-hidden="true"></span>
-                               {{ task.status }}
-                    {% endif %}
-                   </td>
                 {% if task.is_deleted == False %}
                 <td class="default">
                         <form class="form-horizontal" id="delete" action="/task/delete/{{ task.id }}/" method="post">{% csrf_token %}
@@ -136,23 +146,4 @@ $(document).ready(function() {
     {% endif %}
 {% endif %}
 </div>
-<script>
-$(function(){
-    $('.editable-field').editable({
-        url: '/post',
-        title: 'Correct values',
-        success: function(response, newValue) {
-            if(response.status == 'error') return response.msg; //msg will be shown in editable form
-        },
-        params: function(params) {  //params already contain `name`, `value` and `pk`
-        var data = {};
-        data['id'] = params.pk;
-        data['field'] = params.name;
-        data[params.name] = params.value;
-        data['csrfmiddlewaretoken'] = '{{ csrf_token }}';
-        return data;
-  }
-    });
-});
-</script>
 {% endblock %}

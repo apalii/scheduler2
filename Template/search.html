@@ -16,7 +16,8 @@
 
 
 </table>
-
+{% endblock %}
+{% block additional_js %}
 <script>
 $(function(){
     $('#search').keyup(function(){
@@ -35,7 +36,7 @@ $(function(){
         }
     });
 });
- 
+
 function searchSuccess(data, textStatus, jqXHR)
 {
     $('#search_results').html(data);

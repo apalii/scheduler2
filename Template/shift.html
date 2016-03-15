@@ -1,132 +1,139 @@
 {% extends "main.html" %}
+{% load static %}
 {% load app_filters %}
 {% block title %}Shift{% endblock %}
 
+{% block additional_css %}
+<link href="//cdnjs.cloudflare.com/ajax/libs/x-editable/1.5.1/bootstrap3-editable/css/bootstrap-editable.css" rel="stylesheet"/>
+{% endblock %}
+
 {% block additional_js %}
+<script src="//cdnjs.cloudflare.com/ajax/libs/x-editable/1.5.1/bootstrap3-editable/js/bootstrap-editable.min.js"></script>
+<script src={% static "js/changestatus.js" %}></script>
 {% endblock %}
 
 {% block content %}
 
 {% if tasks %}
+<input type=hidden id=csrf value={{ csrf_token }} />
 <div class="panel panel-warning">
-    <div class="panel-heading"><h5>
-        {% if day %}<span class="fa fa-sun-o fa-2x"></span>
-        {% else %}<span class="fa fa-moon-o fa-2x"></span>
-        {% endif %} Shift</h5></div>
-    <div class="panel-body">
-        <div class="table-responsive">
+	<div class="panel-heading"><h5>
+		{% if day %}<span class="fa fa-sun-o fa-2x"></span>
+		{% else %}<span class="fa fa-moon-o fa-2x"></span>
+		{% endif %} Shift</h5></div>
+		<div class="panel-body">
+			<div class="table-responsive">
 
-<table class="table table-bordered">
-  <tr class="text-center">
-    <td class="info" width="200" >Ticket</td>
-    <td class="info" width="200" >Date</td>
-    <td class="info" width="200" >Customer</td>
-    <td class="info">Task</td>
-    <td class="info" width="120">Executor</td>
-    <td class="info" width="120">Status</td>
-  </tr>
-    {% for task in tasks %}
-      <tr class="text-center">
-        <td class="active">
-          <a href="https://rt.portaone.com/Ticket/Display.html?id={{ task.ticket }}" target="_blank">
-             <span class="badge">
-                  {% if task.office == 1 %}k{%elif task.office == 2 %}c{% elif task.office == 3 %}s{% else %}n{% endif %}
-              </span>
-              {{ task.ticket|ticket_only }}
-          </a>
-          <a href="/tasks/get/{{ task.id }}/">detail</a>
-            <!--<span class="badge">14</span>-->
-        </td>
-        <td class="active">{{ task.date|date:"H:i d M y" }}</td>
-        <td class="active">
-            <a href="https://rt.portaone.com/Customers/Display.html?id={{ task.customer_id }}" target="_blank">{{ task.customer }}</a>
-        </td>
-        <td class="active">{{ task.task|lower|truncatewords:'3' }}</td>
-        <td class="active">{{ task.executor }}</td>
-        {% if task.status|lower == 'done' %}
-            <td class="success">{{ task.status }}</td>
-        {% elif 'In' in task.status or 'Post' in task.status  or 'Part' in task.status %}
-           <td class="info">{{ task.status }}</td>
-        {% elif 'Sch' in task.status %}
-           <td class="default">{{ task.status }}</td>
-        {% else %}
-           <td class="danger">{{ task.status }}</td>
-        {% endif %}
-      </tr>
-    {% endfor %}
-</table>
+				<table class="table table-bordered">
+					<tr class="text-center">
+						<td class="info" width="200" >Ticket</td>
+						<td class="info" width="200" >Date</td>
+						<td class="info" width="200" >Customer</td>
+						<td class="info">Task</td>
+						<td class="info" width="120">Executor</td>
+						<td class="info" width="120">Status</td>
+					</tr>
+					{% for task in tasks %}
+					<tr class="text-center">
+						<td class="active">
+							<a href="https://rt.portaone.com/Ticket/Display.html?id={{ task.ticket }}" target="_blank">
+								<span class="badge">
+									{% if task.office == 1 %}k{%elif task.office == 2 %}c{% elif task.office == 3 %}s{% else %}n{% endif %}
+								</span>
+								{{ task.ticket|ticket_only }}
+							</a>
+							<a href="/tasks/get/{{ task.id }}/">detail</a>
+							<!--<span class="badge">14</span>-->
+						</td>
+						<td class="active">{{ task.date|date:"H:i d M y" }}</td>
+						<td class="active">
+							<a href="https://rt.portaone.com/Customers/Display.html?id={{ task.customer_id }}" target="_blank">{{ task.customer }}</a>
+						</td>
+						<td class="active">{{ task.task|lower|truncatewords:'3' }}</td>
+						<td class="active">{{ task.executor }}</td>
+						{% if task.status|lower == 'done' %}
+						<td class="success">
+							<a href="#" class="editable-field status" data-pk="{{ task.id }}" data-url="/task/changestatus/{{ task.id }}/" data-value="{{ task.status }}"></a>
+						</td>
+						{% elif 'In' in task.status or 'Post' in task.status  or 'Part' in task.status %}
+						<td class="info">
+							<a href="#" class="editable-field status" data-pk="{{ task.id }}" data-url="/task/changestatus/{{ task.id }}/" data-value="{{ task.status }}"></a>
+						</td>
+						{% elif 'Sch' in task.status %}
+						<td class="default">
+							<a href="#" class="editable-field status" data-pk="{{ task.id }}" data-url="/task/changestatus/{{ task.id }}/" data-value="{{ task.status }}"></a>
+						</td>
+						{% else %}
+						<td class="danger">
+							<a href="#" class="editable-field status" data-pk="{{ task.id }}" data-url="/task/changestatus/{{ task.id }}/" data-value="{{ task.status }}"></a>
+						</td>
+						{% endif %}
+					</tr>
+					{% endfor %}
+				</table>
 
-        </div>
-    </div>
-</div>
-{% elif tasks|length == 0 and nearest %}
+			</div>
+		</div>
+	</div>
+	{% elif tasks|length == 0 and nearest %}
 
-<div class="alert alert-success">
-    <a href="#" class="close" data-dismiss="alert">&times;</a>
-    <strong>There are no tasks for today !</strong>
-</div>
+	<div class="alert alert-success">
+		<a href="#" class="close" data-dismiss="alert">&times;</a>
+		<strong>There are no tasks for today !</strong>
+	</div>
 
-<div class="panel panel-success">
-    <div class="panel-heading">
-        <h5><span class="fa fa-calendar-check-o fa-2x"></span>  Nearest</h5></div>
-    <div class="panel-body">
-        <div class="table-responsive">
+	<div class="panel panel-success">
+		<div class="panel-heading">
+			<h5><span class="fa fa-calendar-check-o fa-2x"></span>  Nearest</h5></div>
+			<div class="panel-body">
+				<div class="table-responsive">
 
-<table class="table table-bordered">
-  <tr class="text-center">
-    <td class="info" width="200" >Ticket</td>
-    <td class="info" width="200" >Date</td>
-    <td class="info" width="200" >Customer</td>
-    <td class="info">Task</td>
-    <td class="info" width="120">Executor</td>
-    <td class="info" width="120">Status</td>
-  </tr>
-    {% for task in nearest %}
-      <tr class="text-center">
-        <td class="active">
-          <a href="https://rt.portaone.com/Ticket/Display.html?id={{ task.ticket }}" target="_blank">
-             <span class="badge">
-                  {% if task.office == 1 %}k{%elif task.office == 2 %}c{% elif task.office == 3 %}s{% else %}n{% endif %}
-              </span>
-              {{ task.ticket|ticket_only }}
-          </a>
-          <a href="/tasks/get/{{ task.id }}/">detail</a>
-            <!--<span class="badge">14</span>-->
-        </td>
-        <td class="active">{{ task.date|date:"H:i d M y" }}</td>
-        <td class="active">
-            <a href="https://rt.portaone.com/Customers/Display.html?id={{ task.customer_id }}" target="_blank">{{ task.customer }}</a>
-        </td>
-        <td class="active">{{ task.task|lower|truncatewords:'3' }}</td>
-        <td class="active">{{ task.executor }}</td>
-        {% if task.status|lower == 'done' %}
-            <td class="success">{{ task.status }}</td>
-        {% elif 'In' in task.status or 'Post' in task.status  or 'Part' in task.status %}
-           <td class="info">{{ task.status }}</td>
-        {% elif 'Sch' in task.status %}
-           <td class="default">{{ task.status }}</td>
-        {% else %}
-           <td class="danger">{{ task.status }}</td>
-        {% endif %}
-      </tr>
-    {% endfor %}
-</table>
-
-        </div>
-    </div>
-</div>
-{% else %}
-<div class="alert alert-success">
-    <a href="#" class="close" data-dismiss="alert">&times;</a>
-    <strong>There are no task for today and the nearest tasks as well !</strong>
-</div>
-{% endif %}
-<script>
-$(function() {
-    var noTasks = $('.alert.alert-success');
-    if (noTasks) {
-        noTasks.fadeOut(5000);
-    }
-});
-</script>
-{% endblock %}
+					<table class="table table-bordered">
+						<tr class="text-center">
+							<td class="info" width="200" >Ticket</td>
+							<td class="info" width="200" >Date</td>
+							<td class="info" width="200" >Customer</td>
+							<td class="info">Task</td>
+							<td class="info" width="120">Executor</td>
+							<td class="info" width="120">Status</td>
+						</tr>
+						{% for task in nearest %}
+						<tr class="text-center">
+							<td class="active">
+								<a href="https://rt.portaone.com/Ticket/Display.html?id={{ task.ticket }}" target="_blank">
+									<span class="badge">
+										{% if task.office == 1 %}k{%elif task.office == 2 %}c{% elif task.office == 3 %}s{% else %}n{% endif %}
+									</span>
+									{{ task.ticket|ticket_only }}
+								</a>
+								<a href="/tasks/get/{{ task.id }}/">detail</a>
+								<!--<span class="badge">14</span>-->
+							</td>
+							<td class="active">{{ task.date|date:"H:i d M y" }}</td>
+							<td class="active">
+								<a href="https://rt.portaone.com/Customers/Display.html?id={{ task.customer_id }}" target="_blank">{{ task.customer }}</a>
+							</td>
+							<td class="active">{{ task.task|lower|truncatewords:'3' }}</td>
+							<td class="active">{{ task.executor }}</td>
+							{% if task.status|lower == 'done' %}
+							<td class="success">{{ task.status }}</td>
+							{% elif 'In' in task.status or 'Post' in task.status  or 'Part' in task.status %}
+							<td class="info">{{ task.status }}</td>
+							{% elif 'Sch' in task.status %}
+							<td class="default">{{ task.status }}</td>
+							{% else %}
+							<td class="danger">{{ task.status }}</td>
+							{% endif %}
+						</tr>
+						{% endfor %}
+					</table>
+				</div>
+			</div>
+		</div>
+		{% else %}
+		<div class="alert alert-success">
+			<a href="#" class="close" data-dismiss="alert">&times;</a>
+			<strong>There are no task for today and the nearest tasks as well !</strong>
+		</div>
+		{% endif %}
+		{% endblock %}

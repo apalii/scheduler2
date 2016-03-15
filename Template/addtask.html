@@ -2,17 +2,41 @@
 {% load static %}
 
 {% block title %}Add task{% endblock %}
-
-{% block additional_js %}
+{% block additional_css %}
 <link href={% static "css/jquery.datetimepicker.css" %} rel="stylesheet" />
 <link href="https://code.jquery.com/ui/1.11.4/themes/smoothness/jquery-ui.css" rel="stylesheet"/>
+{% endblock %}
+{% block additional_js %}
 <script src={% static "js/jquery.datetimepicker.js" %}></script>
 <script src={% static "js/validator.js" %}></script>
 <script src="https://code.jquery.com/ui/1.11.4/jquery-ui.min.js"></script>
+<script>
+    $('#datetimepicker').datetimepicker({
+    dayOfWeekStart : 1,
+    step: 15,
+    inline: false
+});
+    $(function() {
+        $("#cust_id").autocomplete({
+            source: function (request, response) {
+                $.ajax({
+                    url: "/tasks/getcustid",
+                    dataType: "json",
+                    data: {
+                        q: request.term
+                    },
+                    success: function (data) {
+                        response(data);
+                    }
+                });
+            },
+            minLength: 3
+        });
+    });
+</script>
 {% endblock %}
 
 {% block content %}<br>
-
 <form  class="form-horizontal" action="/task/adding/" method="post" onsubmit="return validate();" >{% csrf_token %}
 
       <div class="form-group">
@@ -74,30 +98,4 @@
         </div>
       </div>
 </form>
-<script>
-    $('#datetimepicker').datetimepicker({
-    dayOfWeekStart : 1,
-    step: 15,
-    inline: false
-});
-</script>
-<script>
-    $(function() {
-        $("#cust_id").autocomplete({
-            source: function (request, response) {
-                $.ajax({
-                    url: "/tasks/getcustid",
-                    dataType: "json",
-                    data: {
-                        q: request.term
-                    },
-                    success: function (data) {
-                        response(data);
-                    }
-                });
-            },
-            minLength: 3
-        });
-    });
-</script>
 {% endblock %}

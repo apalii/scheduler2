@@ -142,6 +142,7 @@ class TasksNew(ListView):
 
 class TasksOld(TasksNew):
     paginate_by = 10
+    paginate_orphans = 2
 
     def get_queryset(self):
         now = timezone.now()
