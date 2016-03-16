@@ -41,20 +41,45 @@ def get_ip(request):
 
 
 @require_safe
-def nearest_task_json(request):
+@cache_page(60)
+def nearest_task_json(request, office_id):
+    """
+    As it was agreed for the intergration with Portarius(chorome addon) - was
+    added 3 separate endpoints for the nearest tasks
+    for every particular office.
+    """
     now = timezone.now()
-    near_task = Task.active.filter(date__gt=now).order_by('date').values()[0]
-    near_task['date'] = str(near_task['date'])
-    near_task['added'] = str(near_task['added'])
-    return JsonResponse(near_task)
+    office_id = int(office_id)
+    office_map = {
+        1: "kyiv",
+        2: "chernihiv",
+        3: "sumy",
+    }
+    try:
+        near_task = Task.active.filter(
+            date__gt=now).filter(
+            office=office_id).order_by('date').values()[0]
+    except IndexError:
+        near_task = "There are no nearest tasks"
+    near_tasks = {
+        office_map[office_id]: near_task,
+    }
+    return JsonResponse(near_tasks)
 
 
 @require_safe
 @login_required
 def main_page(request):
     now = timezone.now()
+    user = User.objects.get(id=request.user.id)
+    office = user.engineer.office
     try:
-        near_task = Task.active.filter(date__gt=now).order_by('date')[0]
+        if office:
+            near_task = Task.active.filter(
+                date__gt=now).filter(office=office).order_by('date')[0]
+        else:
+            near_task = Task.active.filter(
+                date__gt=now).filter(office=2).order_by('date')[0]
     except IndexError:
         near_task = None
     args = {

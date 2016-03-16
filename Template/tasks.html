@@ -31,7 +31,7 @@
         <td class="active">
             <a href="https://rt.portaone.com/Customers/Display.html?id={{ task.customer_id }}" target="_blank">{{ task.customer }}</a>
         </td>
-        <td class="active">{{ task.task|lower|truncatewords:'4' }}</td>
+        <td class="active">{{ task.task|lower|truncatewords:'6' }}</td>
         <td class="active">{{ task.executor }}</td>
         <td class="active">{{ task.added_by }}</td>
             {% if task.status|lower == 'done' %}

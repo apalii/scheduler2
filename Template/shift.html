@@ -49,7 +49,7 @@
 						<td class="active">
 							<a href="https://rt.portaone.com/Customers/Display.html?id={{ task.customer_id }}" target="_blank">{{ task.customer }}</a>
 						</td>
-						<td class="active">{{ task.task|lower|truncatewords:'3' }}</td>
+						<td class="active">{{ task.task|lower|truncatewords:'9' }}</td>
 						<td class="active">{{ task.executor }}</td>
 						{% if task.status|lower == 'done' %}
 						<td class="success">
@@ -113,7 +113,7 @@
 							<td class="active">
 								<a href="https://rt.portaone.com/Customers/Display.html?id={{ task.customer_id }}" target="_blank">{{ task.customer }}</a>
 							</td>
-							<td class="active">{{ task.task|lower|truncatewords:'3' }}</td>
+							<td class="active">{{ task.task|lower|truncatewords:'5' }}</td>
 							<td class="active">{{ task.executor }}</td>
 							{% if task.status|lower == 'done' %}
 							<td class="success">{{ task.status }}</td>
