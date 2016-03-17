@@ -86,7 +86,7 @@ class Task(models.Model):
 
     task_user = models.ForeignKey(User, related_name="task_user_id", default="1")
     ticket = models.CharField(max_length=30)
-    date = models.DateTimeField()
+    date = models.DateTimeField(db_index=True)
     added = models.DateTimeField(auto_now_add=True)
     added_by = models.CharField(max_length=33, default="Unknown")
     customer = models.CharField(max_length=30)

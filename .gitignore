@@ -5,7 +5,7 @@ migrations/
 *.db
 .idea/
 BJ.py
-
+secret_key
 
 # C extensions
 *.so
