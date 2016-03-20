@@ -58,7 +58,7 @@ def nearest_task_json(request, office_id):
     try:
         near_task = Task.active.filter(
             date__gt=now).filter(
-            office=office_id).order_by('date').values()[0]
+            office=office_id).order_by('date').values().first()
     except IndexError:
         near_task = "There are no nearest tasks"
     near_tasks = {
@@ -76,17 +76,17 @@ def main_page(request):
     try:
         if office:
             near_task = Task.active.filter(
-                date__gt=now).filter(office=office).order_by('date')[0]
+                date__gt=now).filter(office=office).order_by('date').first()
         else:
             near_task = Task.active.filter(
-                date__gt=now).filter(office=2).order_by('date')[0]
+                date__gt=now).filter(office=2).order_by('date').first()
     except IndexError:
         near_task = None
-    args = {
+    context = {
         'active': 'Home',
         'near_task': near_task,
     }
-    return render(request, 'main.html', args)
+    return render(request, 'main.html', context)
 
 
 @require_safe
@@ -107,8 +107,8 @@ def shift(request):
             today.year, today.month, today.day, 8, 0, 0)
         today_20 = datetime.datetime(
             today.year, today.month, today.day, 20, 0, 0)
-        tasks = Task.active.filter(date__gte=today_8).exclude(
-            date__gte=today_20).order_by('-date')
+        tasks = Task.active.filter(
+            date__range=(today_8, today_20)).order_by('-date')
 
     elif now.hour >= 20:
         # case from 20-00 to 23-00 night shift
@@ -116,8 +116,8 @@ def shift(request):
         today_20 = datetime.datetime(
             today.year, today.month, today.day, 20, 0, 0)
         tomorrow = today_20 + datetime.timedelta(hours=12)
-        tasks = Task.active.filter(date__gte=today_20).exclude(
-            date__gte=tomorrow).order_by('date')
+        tasks = Task.active.filter(
+            date__range=(today_20, tomorrow)).order_by('date')
 
     elif now.hour >= 0 and now.hour < 8:
         # case from 00-00 to 08-00 night shift
@@ -125,8 +125,8 @@ def shift(request):
         yesterday_20 = datetime.datetime(
             today.year, today.month, today.day - 1, 20, 0, 0)
         tomorrow = yesterday_20 + datetime.timedelta(hours=12)
-        tasks = Task.active.filter(date__gte=yesterday_20).exclude(
-            date__gte=tomorrow).order_by('date')
+        tasks = Task.active.filter(
+            date__range=(yesterday_20, tomorrow)).order_by('date')
 
     nearest = Task.active.filter(date__gt=now).order_by('date')[0:3]
     """
@@ -134,13 +134,13 @@ def shift(request):
     Else show tasks only for particular office
     """
     tasks_per_office = tasks.filter(office=office) if office else tasks
-    args = {
+    context = {
         'active': 'Shift',
         'nearest': nearest,
         'tasks': tasks_per_office,
         'day': day
     }
-    return render(request, 'shift.html', args)
+    return render(request, 'shift.html', context)
 
 
 class TasksNew(ListView):
@@ -188,16 +188,16 @@ def month(request):
 def task(request, task_id=1):
     comment_form = CommentForm
     status_form = StatusForm
-    args = {}
-    args.update(csrf(request))
-    args['form'] = comment_form
-    args['status_form'] = status_form
-    args['task'] = get_object_or_404(Task, id=task_id)
-    args['comments'] = Comment.objects.filter(
+    context = {}
+    context.update(csrf(request))
+    context['form'] = comment_form
+    context['status_form'] = status_form
+    context['task'] = get_object_or_404(Task, id=task_id)
+    context['comments'] = Comment.objects.filter(
         comments_task_id=task_id)
-    args['added_by'] = Task.objects.get(id=task_id).added_by
-    args['logs'] = Log.objects.filter(log_task=task_id).order_by('-date')
-    return render(request, 'task.html', args)
+    context['added_by'] = Task.objects.get(id=task_id).added_by
+    context['logs'] = Log.objects.filter(log_task=task_id).order_by('-date')
+    return render(request, 'task.html', context)
 
 
 @require_POST
@@ -282,10 +282,10 @@ def get_cust_id(request):
 @login_required
 def add_task(request):
     if request.method == 'GET':
-        args = {}
-        args.update(csrf(request))
-        args['active'] = 'Add'
-        return render(request, 'addtask.html', args)
+        context = {}
+        context.update(csrf(request))
+        context['active'] = 'Add'
+        return render(request, 'addtask.html', context)
     elif request.method == 'POST':
         post_data = request.POST['date']
         path = request.META.get('PATH_INFO')
@@ -299,22 +299,22 @@ def add_task(request):
         try:
             cust_inc = Customer.objects.get(name=request.POST['customer'])
         except Customer.DoesNotExist:
-            args = {'message': 'Choose customer from the list !',
+            context = {'message': 'Choose customer from the list !',
                     'path': path
                     }
-            return render(request, '404.html', args)
+            return render(request, '404.html', context)
 
         if datetime.datetime.strptime(post_data, '%Y-%m-%d %H:%M') <= now:
-            args = {'message': 'Timeframe in the past !',
+            context = {'message': 'Timeframe in the past !',
                     'path': path
                     }
-            return render(request, '404.html', args)
+            return render(request, '404.html', context)
 
         elif request.POST['office'] not in ['0', '1', '2', '3']:
-            args = {'message': 'Please choose appropriate office !',
+            context = {'message': 'Please choose appropriate office !',
                     'path': path
                     }
-            return render(request, '404.html', args)
+            return render(request, '404.html', context)
 
         elif 'update' in request.POST['task'].lower() and \
              'from' in request.POST['task'].lower():
@@ -343,12 +343,12 @@ def add_task(request):
 
         if update_near or update_shift:
             msg = 'Another update exists. Press backspace and try another date'
-            args = {'message': msg,
+            context = {'message': msg,
                     'updates': update_near,
                     'update_shift': update_shift,
                     'path': path,
                    }
-            return render(request, '404.html', args)
+            return render(request, '404.html', context)
 
         else:
             owner = "Nobody" if not request.POST['executor'] else request.POST['executor']
@@ -370,18 +370,18 @@ def add_task(request):
 @login_required
 def search_tasks(request):
     if request.method == 'GET':
-        args = {}
-        args.update(csrf(request))
-        args['active'] = 'Search'
-        return render(request, 'search.html', args)
+        context = {}
+        context.update(csrf(request))
+        context['active'] = 'Search'
+        return render(request, 'search.html', context)
     if request.method == 'POST':
         search_text = request.POST['search_text']
     else:
         search_text = ""
     tasks = Task.objects.filter(
         task__contains=search_text).order_by("-date")
-    args = {'tasks': tasks}
-    return render(request, 'ajax_search.html', args)
+    context = {'tasks': tasks}
+    return render(request, 'ajax_search.html', context)
 
 
 @require_safe
@@ -389,7 +389,7 @@ def search_tasks(request):
 @cache_page(3600 * 24)
 def docs(request):
     history_url = 'https://api.github.com/repos/apalii/scheduler2/commits'
-    args = {}
-    args['version'] = '3.0 beta'
-    args['history'] = requests.get(history_url).json()
-    return render(request, 'docs.html', args)
+    context = {}
+    context['version'] = '3.0 beta'
+    context['history'] = requests.get(history_url).json()
+    return render(request, 'docs.html', context)
