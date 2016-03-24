@@ -1,7 +1,7 @@
 __author__ = 'apalii'
 
 from django.contrib import admin
-from app_tasks.models import Task, Comment, Customer, Engineer, Log
+from app_tasks.models import Task, Comment, Customer, Engineer, Log, City
 
 from django.contrib.auth.admin import UserAdmin as BaseUserAdmin
 from django.contrib.auth.models import User
@@ -40,7 +40,6 @@ class LogAdmin(admin.ModelAdmin):
         return False
 
 
-
 class LogInline(admin.StackedInline):
     model = Log
     can_delete = False
@@ -52,8 +51,10 @@ class UserAdmin(BaseUserAdmin):
     inlines = (EngineerInline, )
 
 
+
 admin.site.register(Task, TaskAdmin)
 admin.site.register(Customer)
+admin.site.register(City)
 admin.site.register(Log, LogAdmin)
 # Re-register UserAdmin
 admin.site.unregister(User)

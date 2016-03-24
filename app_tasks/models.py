@@ -100,7 +100,7 @@ class Task(models.Model):
 
 
     def __unicode__(self):
-        return "{} : {}".format(str(self.id), self.ticket)
+        return "{} : {} {}".format(str(self.id), self.ticket, self.date)
 
     class Meta():
         db_table = 'task'

@@ -321,12 +321,12 @@ def add_task(request):
             # update during range +-4 hours
             time_before = tz_date - timezone.timedelta(hours=4)
             time_after  = tz_date + timezone.timedelta(hours=4)
-
+            print time_before, time_after
             # lookup for nearest updates
-            update_near = Task.objects.exclude(
-                date__lt=time_before, date__gt=time_after).filter(
+            update_near = Task.active.exclude(
+                date__lt=time_before).exclude(date__gt=time_after).filter(
                 task__contains='update').filter(task__contains='from')
-
+            print update_near
             # update during shifts
             shift = 'day' if tz_date.hour > 8 and tz_date.hour < 20 else 'night'
             day_start = timezone.datetime(tz_date.year, tz_date.month, tz_date.day, 8, 0, 0)
@@ -334,11 +334,11 @@ def add_task(request):
             tomorrow = day_start + datetime.timedelta(days=1)
 
             # lookup for day/night shift
-            update_shift = Task.objects.exclude(
-                date__lt=day_start, date__gt=day_end).filter(
+            update_shift = Task.active.exclude(
+                date__lt=day_start).exclude(date__gt=day_end).filter(
                 task__contains='update') if shift == 'day' else \
-            Task.objects.exclude(
-                date__lt=tomorrow,date__gt=day_end).filter(
+            Task.active.exclude(
+                date__lt=tomorrow).exclude(date__gt=day_end).filter(
                 task__contains='update').filter(task__contains='from')
 
         if update_near or update_shift:
