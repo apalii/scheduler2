@@ -51,7 +51,6 @@ class UserAdmin(BaseUserAdmin):
     inlines = (EngineerInline, )
 
 
-
 admin.site.register(Task, TaskAdmin)
 admin.site.register(Customer)
 admin.site.register(City)
