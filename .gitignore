@@ -6,6 +6,7 @@ migrations/
 .idea/
 BJ.py
 secret_key
+static/admin/
 
 # C extensions
 *.so
