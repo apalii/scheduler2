@@ -5,6 +5,7 @@ import json
 import requests
 from django.http import HttpResponse, Http404, JsonResponse
 from django.shortcuts import render_to_response, render
+from django.db.models import Count
 from app_tasks.models import Task, Comment, Customer, Log
 from django.contrib.auth.models import User
 from forms import CommentForm, StatusForm
@@ -134,10 +135,17 @@ def shift(request):
     Else show tasks only for particular office
     """
     tasks_per_office = tasks.filter(office=office) if office else tasks
+    """
+    Adding comments counting according to
+    https://docs.djangoproject.com/en/1.7/topics/db/aggregation/#cheat-sheet
+    """
+    tasks_and_comments = tasks_per_office.annotate(
+        comments=Count('comment')
+    )
     context = {
         'active': 'Shift',
         'nearest': nearest,
-        'tasks': tasks_per_office,
+        'tasks': tasks_and_comments,
         'day': day
     }
     return render(request, 'shift.html', context)

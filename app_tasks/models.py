@@ -113,6 +113,11 @@ class Comment(models.Model):
     added = models.DateTimeField(auto_now_add=True)
     added_by = models.CharField(max_length=33, default="Unknown")
 
+
+    def __unicode__(self):
+        return "{} : {}".format(self.comments_task, self.comment)
+
+
     class Meta():
         db_table = 'comment'
         ordering = ['added']

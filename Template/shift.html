@@ -10,6 +10,11 @@
 {% block additional_js %}
 <script src="//cdnjs.cloudflare.com/ajax/libs/x-editable/1.5.1/bootstrap3-editable/js/bootstrap-editable.min.js"></script>
 <script src={% static "js/changestatus.js" %}></script>
+<script>
+$(document).ready(function(){
+    $('[data-toggle="tooltip"]').tooltip();
+});
+</script>
 {% endblock %}
 
 {% block content %}
@@ -36,11 +41,14 @@
 					{% for task in tasks %}
 					<tr class="text-center">
 						<td class="active">
-							<a href="https://rt.portaone.com/Ticket/Display.html?id={{ task.ticket }}" target="_blank">
-								<span class="badge">
+                                <span class="badge" data-toggle="tooltip" title="Comments">
+										{{task.comments}}
+								</span>
+								<span class="badge" data-toggle="tooltip" title="Office">
 									{% if task.office == 1 %}k{%elif task.office == 2 %}c{% elif task.office == 3 %}s{% else %}n{% endif %}
 								</span>
-								{{ task.ticket|ticket_only }}
+							<a href="https://rt.portaone.com/Ticket/Display.html?id={{ task.ticket }}" target="_blank">
+                            {{ task.ticket|ticket_only }}
 							</a>
 							<a href="/tasks/get/{{ task.id }}/">detail</a>
 							<!--<span class="badge">14</span>-->
