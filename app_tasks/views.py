@@ -26,7 +26,6 @@ def logging(task_id, message):
     new_log = Log.objects.create(
         log_task=task, message=message, date=timezone.now()
     )
-    return
 
 
 def get_ip(request):
