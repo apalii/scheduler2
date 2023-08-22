@@ -1,4 +1,4 @@
-Django==1.7.11
+Django==1.11.18
 argparse==1.2.1
 decorator==4.0.9
 django-tastypie==0.13.3
@@ -11,7 +11,7 @@ ptyprocess==0.5.1
 python-dateutil==2.4.2
 python-mimeparse==1.5.1
 pytz==2014.10
-requests==2.9.1
+requests==2.20.0
 simplegeneric==0.8.1
 six==1.10.0
 traitlets==4.1.0
